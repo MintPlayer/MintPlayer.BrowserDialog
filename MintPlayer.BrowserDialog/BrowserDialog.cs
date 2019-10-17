@@ -1,0 +1,82 @@
+﻿using MintPlayer.IconUtils;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace MintPlayer.BrowserDialog
+{
+    public partial class BrowserDialog : Form
+    {
+        public BrowserDialog()
+        {
+            InitializeComponent();
+        }
+
+        private void BrowserDialog_Load(object sender, EventArgs e)
+        {
+            // Suspend the drawing of the listview
+            lvBrowsers.SuspendLayout();
+
+            // Remove all items from the listview
+            lvBrowsers.Items.Clear();
+
+            // Assign a new imagelist
+            lvBrowsers.LargeImageList = new ImageList
+            {
+                ImageSize = new Size(60, 60),
+                ColorDepth = ColorDepth.Depth32Bit
+            };
+
+            // Get all browsers on the system
+            browsers = PlatformBrowser.PlatformBrowser.GetInstalledBrowsers();
+
+            // Loop through all browsers
+            for (var i = 0; i < browsers.Count; i++)
+            {
+                var browser = browsers[i];
+
+                // Get image
+                var icon = IconExtractor.Split(browser.IconPath)[browser.IconIndex < 0 ? 0 : browser.IconIndex];
+                var icons = IconExtractor.Split(icon);
+                var largestSize = icons.Max(i => i.Width);
+                var largestIcon = icons.LastOrDefault(i => i.Width == largestSize);
+                lvBrowsers.LargeImageList.Images.Add(largestIcon);
+
+                lvBrowsers.Items.Add(new ListViewItem
+                {
+                    Text = browser.Name,
+                    Tag = browser.ExecutablePath.Trim('\"'),
+                    ImageIndex = i,
+                });
+            }
+        }
+
+        private List<PlatformBrowser.Browser> browsers = new List<PlatformBrowser.Browser>();
+        public PlatformBrowser.Browser SelectedBrowser
+        {
+            get
+            {
+                if (lvBrowsers.SelectedIndices.Count == 0)
+                    return null;
+                else
+                    return browsers[lvBrowsers.SelectedIndices[0]];
+            }
+            set
+            {
+                lvBrowsers.SelectedIndices.Clear();
+                if (value == null) return;
+
+                var item = browsers.FirstOrDefault(b => b.Name == value.Name);
+                if (item == null) return;
+
+                lvBrowsers.SelectedIndices.Add(browsers.IndexOf(item));
+            }
+        }
+    }
+}
