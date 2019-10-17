@@ -1,12 +1,12 @@
 # BrowserDialog
-Dialog that lets the user pick from the installed webbrowsers.
+![Dialog that lets the user pick from the installed webbrowsers](https://github.com/MintPlayer/BrowserDialog/blob/master/BrowserDialog.png)
 ## NuGet package
 https://www.nuget.org/packages/MintPlayer.BrowserDialog/
 ## Installation
 ### NuGet package manager
 Open the NuGet package manager and install the **MintPlayer.BrowserDialog** package in the project
 ### Package manager console
-Install-Package MintPlayer.BrowserDialog
+    Install-Package MintPlayer.BrowserDialog
 ## Usage
 
     var dialog = new BrowserDialog();
