@@ -9,7 +9,7 @@
     <PackageProjectUrl>https://github.com/MintPlayer/PlatformBrowser</PackageProjectUrl>
     <RepositoryUrl>https://github.com/MintPlayer/PlatformBrowser</RepositoryUrl>
     <RepositoryType>Git</RepositoryType>
-    <PackageTags>Webbrowser, Dialog</PackageTags>
+    <PackageTags>Get webbrowsers</PackageTags>
   </PropertyGroup>
 
   <ItemGroup>
