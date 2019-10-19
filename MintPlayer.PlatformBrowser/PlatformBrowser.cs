@@ -36,12 +36,28 @@ namespace MintPlayer.PlatformBrowser
                     var iconPath = (string)iconKey.GetValue(null);
                     var iconParts = iconPath.Split(',');
 
+                    // Validate the values
+                    string executablePath = ((string)commandKey.GetValue(null)).Trim('"');
+
+                    // ExecutablePath must be .exe
+                    if (System.IO.Path.GetExtension(executablePath) != ".exe")
+                        throw new Exception("ExecutablePath must be .exe");
+
+                    // IconPath must be .exe or .ico
+                    var iconValid = true;
+                    if (!new[] { ".exe", ".ico" }.Contains(System.IO.Path.GetExtension(iconParts[0])))
+                        iconValid = false;
+
                     var browser = new Browser
                     {
                         Name = (string)browserKey.GetValue(null),
-                        ExecutablePath = ((string)commandKey.GetValue(null)).Trim('"'),
-                        IconPath = iconParts[0],
-                        IconIndex = iconParts.Length > 1 ? Convert.ToInt32(iconParts[1]) : 0
+                        ExecutablePath = executablePath,
+                        IconPath = iconValid ? iconParts[0] : executablePath,
+                        IconIndex = !iconValid
+                            ? 0
+                            : iconParts.Length > 1
+                            ? Convert.ToInt32(iconParts[1])
+                            : 0
                     };
                     result.Add(browser);
                 }
