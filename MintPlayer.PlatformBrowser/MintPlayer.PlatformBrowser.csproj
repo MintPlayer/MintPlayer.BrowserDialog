@@ -1,19 +1,20 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
     <Authors>Pieterjan De Clippel</Authors>
     <Company>MintPlayer</Company>
-    <Description>This package allows you to retrieve the web browsers installed on the system.</Description>
+    <Description>This package allows you to retrieve the web browsers (including Microsoft Edge) installed on the system.</Description>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/MintPlayer/PlatformBrowser</PackageProjectUrl>
     <RepositoryUrl>https://github.com/MintPlayer/PlatformBrowser</RepositoryUrl>
     <RepositoryType>Git</RepositoryType>
     <PackageTags>Get webbrowsers</PackageTags>
+    <Version>1.0.2</Version>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Win32.Registry" Version="4.6.0" />
   </ItemGroup>
-
+  
 </Project>

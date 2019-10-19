@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29409.12
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MintPlayer.PlatformBrowser", "MintPlayer.PlatformBrowser\MintPlayer.PlatformBrowser.csproj", "{35945CD5-8D8E-40BA-A924-F142DBD1AA6F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MintPlayer.PlatformBrowser", "MintPlayer.PlatformBrowser\MintPlayer.PlatformBrowser.csproj", "{35945CD5-8D8E-40BA-A924-F142DBD1AA6F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MintPlayer.PlatformBrowser.Test", "MintPlayer.PlatformBrowser.Test\MintPlayer.PlatformBrowser.Test.csproj", "{63B61F84-FB85-47D7-9916-6E4092F68B19}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MintPlayer.PlatformBrowser.Test", "MintPlayer.PlatformBrowser.Test\MintPlayer.PlatformBrowser.Test.csproj", "{63B61F84-FB85-47D7-9916-6E4092F68B19}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

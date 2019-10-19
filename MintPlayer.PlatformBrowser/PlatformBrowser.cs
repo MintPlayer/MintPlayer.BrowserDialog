@@ -1,7 +1,7 @@
 ﻿using System;
+using System.Linq;
 using Microsoft.Win32;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace MintPlayer.PlatformBrowser
 {
@@ -11,7 +11,7 @@ namespace MintPlayer.PlatformBrowser
         public static List<Browser> GetInstalledBrowsers()
         {
             #region Get registry key containing browser information
-            
+
             var internetKey = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\WOW6432Node\Clients\StartMenuInternet");
             if (internetKey == null)
                 internetKey = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Clients\StartMenuInternet");
@@ -52,29 +52,27 @@ namespace MintPlayer.PlatformBrowser
 
             #endregion
 
+            //Debug.Print("You shall not pass");
+
             #region Check if Edge is installed
 
-            if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Windows))
+            var systemAppsFolder = @"C:\Windows\SystemApps\";
+            if (System.IO.Directory.Exists(systemAppsFolder))
             {
-                if (Environment.OSVersion.Version.Major == 10)
+                string[] directories = System.IO.Directory.GetDirectories(systemAppsFolder);
+                var edgeFolder = directories.FirstOrDefault(d => d.StartsWith($"{systemAppsFolder}Microsoft.MicrosoftEdge_"));
+
+                if (edgeFolder != null)
                 {
-                    if (System.IO.Directory.Exists("C:/Windows/SystemApps"))
+                    if (System.IO.File.Exists($@"{edgeFolder}\MicrosoftEdge.exe"))
                     {
-                        var directories = System.IO.Directory.GetDirectories("C:/Windows/SystemApps");
-                        var edgeDir = directories.FirstOrDefault(d => d.StartsWith("Microsoft.MicrosoftEdge_"));
-                        if(edgeDir != null)
+                        result.Add(new Browser
                         {
-                            var edgePath = $"C:/Windows/SystemApps/{edgeDir}/MicrosoftEdge.exe";
-                            
-                            var browser = new Browser
-                            {
-                                Name = "Microsoft Edge",
-                                ExecutablePath = edgePath,
-                                IconPath = edgePath,
-                                IconIndex = 0
-                            };
-                            result.Add(browser);
-                        }
+                            Name = "Microsoft Edge",
+                            ExecutablePath = $@"{edgeFolder}\MicrosoftEdge.exe",
+                            IconPath = $@"{edgeFolder}\MicrosoftEdge.exe",
+                            IconIndex = 0
+                        });
                     }
                 }
             }
