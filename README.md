@@ -1,5 +1,5 @@
 # MintPlayer.PlatformBrowser
-This package allows you to retrieve the web browsers installed on the system.
+This package allows you to retrieve the web browsers (including Microsoft Edge) installed on the system.
 ## NuGet package
 https://www.nuget.org/packages/MintPlayer.PlatformBrowser/
 ## Installation
