@@ -8,17 +8,18 @@
     <StartupObject />
     <Authors>Pieterjan De Clippel</Authors>
     <Company>MintPlayer</Company>
-    <Description>Dialog that let's you choose from the installed browsers on the machine</Description>
+    <Description>Dialog that let's you choose from the installed browsers (including Microsoft Edge) on the machine</Description>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/MintPlayer/BrowserDialog</PackageProjectUrl>
     <RepositoryUrl>https://github.com/MintPlayer/BrowserDialog</RepositoryUrl>
     <RepositoryType>Git</RepositoryType>
-    <PackageTags>Choose browser</PackageTags>
+    <PackageTags>Choose webbrowser</PackageTags>
+    <Version>1.0.1</Version>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="MintPlayer.IconUtils" Version="1.0.2" />
-    <PackageReference Include="MintPlayer.PlatformBrowser" Version="1.0.0" />
+    <PackageReference Include="MintPlayer.PlatformBrowser" Version="1.0.2" />
   </ItemGroup>
 
 </Project>
