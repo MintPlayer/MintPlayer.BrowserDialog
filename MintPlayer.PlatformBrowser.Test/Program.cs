@@ -16,21 +16,30 @@ namespace MintPlayer.PlatformBrowser.Test
                 Console.WriteLine();
             }
 
-            while (true)
+            try
             {
-                try
-                {
-                    var httpDefaultBrowser = PlatformBrowser.GetDefaultBrowser(browsers, Enums.eProtocolType.http);
-                    Console.WriteLine($"HTTP default browser: {httpDefaultBrowser.Name}");
-                }
-                catch (Exception ex)
-                {
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine(ex.Message);
-                    Console.ResetColor();
-                }
-                Console.ReadKey();
+                var httpDefaultBrowser = PlatformBrowser.GetDefaultBrowser(browsers, Enums.eProtocolType.Http);
+                Console.WriteLine($"HTTP default browser: {httpDefaultBrowser.Name}");
             }
+            catch (Exception ex)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine(ex.Message);
+                Console.ResetColor();
+            }
+
+            try
+            {
+                var htmlDefaultBrowser = PlatformBrowser.GetDefaultBrowser(browsers, Enums.eFileType.html);
+                Console.WriteLine($"HTML default browser: {htmlDefaultBrowser.Name}");
+            }
+            catch (Exception ex)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine(ex.Message);
+                Console.ResetColor();
+            }
+            Console.ReadKey();
         }
     }
 }

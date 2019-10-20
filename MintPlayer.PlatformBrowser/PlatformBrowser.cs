@@ -59,7 +59,16 @@ namespace MintPlayer.PlatformBrowser
                     }
                     catch (Exception)
                     {
-                        fileAssociations = new ReadOnlyDictionary<string, object>(new Dictionary<string, object>());
+                        #region Disconfigured browser installation, Add more browsers to this list
+                        string browserIdFormat = string.Empty;
+                        if (browserName.Equals("IEXPLORE.EXE"))
+                            browserIdFormat = "IE.AssocFile.{0}";
+                        #endregion
+
+                        // Add a default list of file associations
+                        var associations = CreateDefaultFileAssociations(browserIdFormat);
+
+                        fileAssociations = new ReadOnlyDictionary<string, object>(associations);
                     }
 
                     try
@@ -76,6 +85,7 @@ namespace MintPlayer.PlatformBrowser
 
                     var browser = new Browser
                     {
+                        KeyName = browserName,
                         Name = (string)browserKey.GetValue(null),
                         ExecutablePath = executablePath,
                         IconPath = iconValid ? iconParts[0] : executablePath,
@@ -112,11 +122,14 @@ namespace MintPlayer.PlatformBrowser
                     {
                         result.Add(new Browser
                         {
+                            KeyName = "Microsoft Edge",
                             Name = "Microsoft Edge",
                             ExecutablePath = $@"{edgeFolder}\MicrosoftEdge.exe",
                             IconPath = $@"{edgeFolder}\MicrosoftEdge.exe",
                             IconIndex = 0,
-                            FileAssociations = new ReadOnlyDictionary<string, object>(new Dictionary<string, object>()),
+                            // http://mikenation.net/files/win-10-reg.txt
+                            //FileAssociations = new ReadOnlyDictionary<string, object>(CreateDefaultFileAssociations("AppXde74bfzw9j31bzhcvsrxsyjnhhbq66cs")),
+                            FileAssociations = new ReadOnlyDictionary<string, object>(CreateDefaultFileAssociations("AppX4hxtad77fbk3jkkeerkrm0ze94wjf3s9")),
                             UrlAssociations = new ReadOnlyDictionary<string, object>(new Dictionary<string, object>())
                         });
                     }
@@ -128,29 +141,106 @@ namespace MintPlayer.PlatformBrowser
             return new ReadOnlyCollection<Browser>(result);
         }
 
+        private static Dictionary<string, object> CreateDefaultFileAssociations(string browserIdFormat)
+        {
+            var associations = new Dictionary<string, object>(new[] {
+                new KeyValuePair<string, object>(".htm", string.Format(browserIdFormat, "HTM")),
+                new KeyValuePair<string, object>(".html", string.Format(browserIdFormat, "HTML")),
+                new KeyValuePair<string, object>(".pdf", string.Format(browserIdFormat, "PDF")),
+                new KeyValuePair<string, object>(".shtml", string.Format(browserIdFormat, "SHTML")),
+                new KeyValuePair<string, object>(".svg", string.Format(browserIdFormat, "SVG")),
+                new KeyValuePair<string, object>(".webp", string.Format(browserIdFormat, "WEBP")),
+                new KeyValuePair<string, object>(".xht", string.Format(browserIdFormat, "XHT")),
+                new KeyValuePair<string, object>(".xhtml", string.Format(browserIdFormat, "XHTML"))
+            });
+            return associations;
+        }
+
+        /// <summary>Get the default browser by protocol (eg. HTTP, HTTPS, FTP, SMS, MailTo, ...)</summary>
+        /// <param name="browsers">When you already called GetInstalledBrowsers(), pass it here.</param>
+        /// <param name="protocolType">Protocol type</param>
+        /// <returns></returns>
         public static Browser GetDefaultBrowser(IEnumerable<Browser> browsers, Enums.eProtocolType protocolType)
         {
             var urlAssociationsKey = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Windows\Shell\Associations\URLAssociations");
-            var protocolName = Enum.GetName(typeof(Enums.eProtocolType), protocolType);
+            var protocolName = Enum.GetName(typeof(Enums.eProtocolType), protocolType).ToLower();
             if (!urlAssociationsKey.GetSubKeyNames().Contains(protocolName))
                 throw new Exception($"No url association for {protocolName}");
 
             var userChoiceKey = urlAssociationsKey.OpenSubKey($@"{protocolName}\UserChoice");
             var defaultBrowserProgId = userChoiceKey.GetValue("ProgId");
 
-            var defaultBrowser = browsers.FirstOrDefault(
-                b => b.UrlAssociations.Any(
-                    a => ((a.Key == protocolName) & (a.Value.Equals(defaultBrowserProgId)))
-                )
-            );
-            return defaultBrowser;
+            switch (defaultBrowserProgId)
+            {
+                case "AppXq0fevzme2pys62n3e0fbqa7peapykr8v":
+                    // Edge
+                    return browsers.FirstOrDefault(
+                        b => b.KeyName == "Microsoft Edge"
+                    );
+                case "IE.HTTP":
+                    // Internet Explorer
+                    return browsers.FirstOrDefault(
+                        b => b.KeyName == "IEXPLORE.EXE"
+                    );
+                default:
+                    return browsers.FirstOrDefault(
+                        b => b.UrlAssociations.Any(
+                            a => ((a.Key == protocolName) & (a.Value.Equals(defaultBrowserProgId)))
+                        )
+                    );
+            }
         }
 
-        public static Browser GetDefaultBrowser(IEnumerable<Browser> browsers, Enums.eFileType protocolType)
+        /// <summary>Get the default browser by protocol (eg. HTTP, HTTPS, FTP, SMS, MailTo, ...).</summary>
+        /// <param name="protocolType">Protocol type</param>
+        /// <returns></returns>
+        public static Browser GetDefaultBrowser(Enums.eProtocolType protocolType)
         {
-            throw new NotImplementedException();
-            //var defaultBrowserKey = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Windows\Shell\Associations\FileAssociations\")
+            var browsers = GetInstalledBrowsers();
+            return GetDefaultBrowser(browsers, protocolType);
+        }
 
+        /// <summary>Get the default browser for the HTTP protocol.</summary>
+        /// <returns></returns>
+        public static Browser GetDefaultBrowser()
+        {
+            return GetDefaultBrowser(Enums.eProtocolType.Http);
+        }
+
+        /// <summary>Get the default browser for the specified file type (html, pdf, svg, ...)</summary>
+        /// <param name="browsers">When you already called GetInstalledBrowsers(), pass it here.</param>
+        /// <param name="fileType">The filetype you want to open</param>
+        public static Browser GetDefaultBrowser(IEnumerable<Browser> browsers, Enums.eFileType fileType)
+        {
+            var ext = Enum.GetName(typeof(Enums.eFileType), fileType).ToLower();
+            var fileExtsKey = Registry.CurrentUser.OpenSubKey($@"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\FileExts");
+            var subkeyNames = fileExtsKey.GetSubKeyNames();
+
+            if (!subkeyNames.Contains($@".{ext}"))
+                throw new Exception("The specified filetype is not present in the registry");
+
+            var fileTypeKey = fileExtsKey.OpenSubKey($@".{ext}\UserChoice");
+            var progId = fileTypeKey.GetValue("ProgId");
+
+            return browsers.FirstOrDefault(
+                b =>
+                {
+                    // Don't compare key AND value. Just check if the value exists in the list.
+                    var res = b.FileAssociations.Any(v => v.Value.Equals(progId));
+
+                    //var res = b.FileAssociations.Any(
+                    //     //fa => ((fa.Key == $".{ext}") & (Equals(fa.Value, progId)))
+                    //     fa => (Equals(fa[$".{ext}"], progId)))
+                    // );
+                    return res;
+                }
+            );
+        }
+
+        public static Browser GetDefaultBrowser(Enums.eFileType fileType)
+        {
+            var browsers = GetInstalledBrowsers();
+            return GetDefaultBrowser(browsers, fileType);
         }
     }
 }

@@ -6,18 +6,18 @@ namespace MintPlayer.PlatformBrowser.Enums
 {
     public enum eProtocolType
     {
-        ftp,
-        http,
-        https,
-        irc,
-        mailto,
-        mms,
-        news,
-        nntp,
-        sms,
-        smsto,
-        tel,
-        urn,
-        webcal
+        Ftp,
+        Http,
+        Https,
+        Irc,
+        MailTo,
+        Mms,
+        News,
+        Nntp,
+        Sms,
+        Smsto,
+        Tel,
+        Urn,
+        WebCal
     }
 }
