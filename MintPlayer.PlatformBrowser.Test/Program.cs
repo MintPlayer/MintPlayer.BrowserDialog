@@ -15,7 +15,22 @@ namespace MintPlayer.PlatformBrowser.Test
                 Console.WriteLine($"Icon index: {browser.IconIndex}");
                 Console.WriteLine();
             }
-            Console.ReadKey();
+
+            while (true)
+            {
+                try
+                {
+                    var httpDefaultBrowser = PlatformBrowser.GetDefaultBrowser(browsers, Enums.eProtocolType.http);
+                    Console.WriteLine($"HTTP default browser: {httpDefaultBrowser.Name}");
+                }
+                catch (Exception ex)
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine(ex.Message);
+                    Console.ResetColor();
+                }
+                Console.ReadKey();
+            }
         }
     }
 }

@@ -2,13 +2,14 @@
 using System.Linq;
 using Microsoft.Win32;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 namespace MintPlayer.PlatformBrowser
 {
     public static class PlatformBrowser
     {
         /// <summary>Retrieves a list of installed browsers from the registry.</summary>
-        public static List<Browser> GetInstalledBrowsers()
+        public static ReadOnlyCollection<Browser> GetInstalledBrowsers()
         {
             #region Get registry key containing browser information
 
@@ -48,6 +49,31 @@ namespace MintPlayer.PlatformBrowser
                     if (!new[] { ".exe", ".ico" }.Contains(System.IO.Path.GetExtension(iconParts[0])))
                         iconValid = false;
 
+                    ReadOnlyDictionary<string, object> fileAssociations;
+                    ReadOnlyDictionary<string, object> urlAssociations;
+                    try
+                    {
+                        // Read the FileAssociations
+                        var fileAssociationsKey = browserKey.OpenSubKey(@"Capabilities\FileAssociations");
+                        fileAssociations = new ReadOnlyDictionary<string, object>(fileAssociationsKey.GetValueNames().ToDictionary(v => v, v => fileAssociationsKey.GetValue(v)));
+                    }
+                    catch (Exception)
+                    {
+                        fileAssociations = new ReadOnlyDictionary<string, object>(new Dictionary<string, object>());
+                    }
+
+                    try
+                    {
+                        // Read the UrlAssociations
+                        var urlAssociationsKey = browserKey.OpenSubKey(@"Capabilities\URLAssociations");
+                        urlAssociations = new ReadOnlyDictionary<string, object>(urlAssociationsKey.GetValueNames().ToDictionary(v => v, v => urlAssociationsKey.GetValue(v)));
+                    }
+                    catch (Exception)
+                    {
+                        urlAssociations = new ReadOnlyDictionary<string, object>(new Dictionary<string, object>());
+                    }
+
+
                     var browser = new Browser
                     {
                         Name = (string)browserKey.GetValue(null),
@@ -57,7 +83,9 @@ namespace MintPlayer.PlatformBrowser
                             ? 0
                             : iconParts.Length > 1
                             ? Convert.ToInt32(iconParts[1])
-                            : 0
+                            : 0,
+                        FileAssociations = fileAssociations,
+                        UrlAssociations = urlAssociations
                     };
                     result.Add(browser);
                 }
@@ -87,7 +115,9 @@ namespace MintPlayer.PlatformBrowser
                             Name = "Microsoft Edge",
                             ExecutablePath = $@"{edgeFolder}\MicrosoftEdge.exe",
                             IconPath = $@"{edgeFolder}\MicrosoftEdge.exe",
-                            IconIndex = 0
+                            IconIndex = 0,
+                            FileAssociations = new ReadOnlyDictionary<string, object>(new Dictionary<string, object>()),
+                            UrlAssociations = new ReadOnlyDictionary<string, object>(new Dictionary<string, object>())
                         });
                     }
                 }
@@ -95,7 +125,32 @@ namespace MintPlayer.PlatformBrowser
 
             #endregion
 
-            return result;
+            return new ReadOnlyCollection<Browser>(result);
+        }
+
+        public static Browser GetDefaultBrowser(IEnumerable<Browser> browsers, Enums.eProtocolType protocolType)
+        {
+            var urlAssociationsKey = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Windows\Shell\Associations\URLAssociations");
+            var protocolName = Enum.GetName(typeof(Enums.eProtocolType), protocolType);
+            if (!urlAssociationsKey.GetSubKeyNames().Contains(protocolName))
+                throw new Exception($"No url association for {protocolName}");
+
+            var userChoiceKey = urlAssociationsKey.OpenSubKey($@"{protocolName}\UserChoice");
+            var defaultBrowserProgId = userChoiceKey.GetValue("ProgId");
+
+            var defaultBrowser = browsers.FirstOrDefault(
+                b => b.UrlAssociations.Any(
+                    a => ((a.Key == protocolName) & (a.Value.Equals(defaultBrowserProgId)))
+                )
+            );
+            return defaultBrowser;
+        }
+
+        public static Browser GetDefaultBrowser(IEnumerable<Browser> browsers, Enums.eFileType protocolType)
+        {
+            throw new NotImplementedException();
+            //var defaultBrowserKey = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Windows\Shell\Associations\FileAssociations\")
+
         }
     }
 }
