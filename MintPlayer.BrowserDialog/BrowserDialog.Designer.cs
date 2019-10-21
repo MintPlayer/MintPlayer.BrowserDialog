@@ -1,4 +1,6 @@
-﻿namespace MintPlayer.BrowserDialog
+﻿using System;
+
+namespace MintPlayer.BrowserDialog
 {
     partial class BrowserDialog
     {
@@ -37,6 +39,7 @@
             // 
             this.btnOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnOK.DialogResult = System.Windows.Forms.DialogResult.OK;
+            this.btnOK.Enabled = false;
             this.btnOK.Location = new System.Drawing.Point(232, 234);
             this.btnOK.Name = "btnOK";
             this.btnOK.Size = new System.Drawing.Size(75, 25);
@@ -61,6 +64,7 @@
                 | System.Windows.Forms.AnchorStyles.Left)
                 | System.Windows.Forms.AnchorStyles.Right)));
             this.lvBrowsers.HideSelection = false;
+            this.lvBrowsers.SelectedIndexChanged += LvBrowsers_SelectedIndexChanged;
             this.lvBrowsers.Location = new System.Drawing.Point(12, 12);
             this.lvBrowsers.MultiSelect = false;
             this.lvBrowsers.Name = "listView1";
@@ -83,6 +87,7 @@
             this.Name = "BrowserDialog";
             this.Text = "Pick a browser";
             this.Load += new System.EventHandler(this.BrowserDialog_Load);
+            this.Shown += new System.EventHandler(this.BrowserDialog_Shown);
             this.ResumeLayout(false);
 
         }

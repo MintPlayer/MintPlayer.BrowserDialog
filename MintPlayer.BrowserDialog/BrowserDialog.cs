@@ -1,6 +1,7 @@
 ﻿using MintPlayer.IconUtils;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
@@ -20,44 +21,74 @@ namespace MintPlayer.BrowserDialog
 
         private void BrowserDialog_Load(object sender, EventArgs e)
         {
-            // Suspend the drawing of the listview
-            lvBrowsers.SuspendLayout();
-
-            // Remove all items from the listview
-            lvBrowsers.Items.Clear();
-
-            // Assign a new imagelist
-            lvBrowsers.LargeImageList = new ImageList
+            try
             {
-                ImageSize = new Size(60, 60),
-                ColorDepth = ColorDepth.Depth32Bit
-            };
+                // Suspend the drawing of the listview
+                lvBrowsers.SuspendLayout();
 
-            // Get all browsers on the system
-            browsers = PlatformBrowser.PlatformBrowser.GetInstalledBrowsers();
+                // Remove all items from the listview
+                lvBrowsers.Items.Clear();
 
-            // Loop through all browsers
-            for (var i = 0; i < browsers.Count; i++)
-            {
-                var browser = browsers[i];
-
-                // Get image
-                var icon = IconExtractor.Split(browser.IconPath)[browser.IconIndex < 0 ? 0 : browser.IconIndex];
-                var icons = IconExtractor.Split(icon);
-                var largestSize = icons.Max(i => i.Width);
-                var largestIcon = icons.LastOrDefault(i => i.Width == largestSize);
-                lvBrowsers.LargeImageList.Images.Add(largestIcon);
-
-                lvBrowsers.Items.Add(new ListViewItem
+                // Assign a new imagelist
+                lvBrowsers.LargeImageList = new ImageList
                 {
-                    Text = browser.Name,
-                    Tag = browser.ExecutablePath.Trim('\"'),
-                    ImageIndex = i,
-                });
+                    ImageSize = new Size(60, 60),
+                    ColorDepth = ColorDepth.Depth32Bit
+                };
+
+                // Get all browsers on the system
+                browsers = PlatformBrowser.PlatformBrowser.GetInstalledBrowsers();
+
+                // Loop through all browsers
+                for (var i = 0; i < browsers.Count; i++)
+                {
+                    var browser = browsers[i];
+
+                    // Get image
+                    var icon = IconExtractor.Split(browser.IconPath)[browser.IconIndex < 0 ? 0 : browser.IconIndex];
+                    var icons = IconExtractor.Split(icon);
+                    var largestSize = icons.Max(i => i.Width);
+                    var largestIcon = icons.LastOrDefault(i => i.Width == largestSize);
+                    lvBrowsers.LargeImageList.Images.Add(largestIcon);
+
+                    lvBrowsers.Items.Add(new ListViewItem
+                    {
+                        Text = browser.Name,
+                        Tag = browser.ExecutablePath.Trim('\"'),
+                        ImageIndex = i,
+                    });
+                }
+
+                // Get default browser
+                defaultBrowser = PlatformBrowser.PlatformBrowser.GetDefaultBrowser(browsers.ToList(), PlatformBrowser.Enums.eProtocolType.Http);
+
+                // Select default browser
+                if (browsers.Contains(defaultBrowser))
+                {
+                    var defaultBrowserListItem = lvBrowsers.Items[
+                        browsers.IndexOf(
+                            browsers.FirstOrDefault(b => b.ExecutablePath == defaultBrowser.ExecutablePath)
+                        )
+                    ];
+                    defaultBrowserListItem.Focused = defaultBrowserListItem.Selected = true;
+                }
+            }
+            catch (Exception)
+            {
+            }
+            finally
+            {
+                lvBrowsers.ResumeLayout();
             }
         }
 
-        private List<PlatformBrowser.Browser> browsers = new List<PlatformBrowser.Browser>();
+        private void BrowserDialog_Shown(object sender, EventArgs e)
+        {
+            lvBrowsers.Focus();
+        }
+
+        private ReadOnlyCollection<PlatformBrowser.Browser> browsers = new ReadOnlyCollection<PlatformBrowser.Browser>(new List<PlatformBrowser.Browser>());
+        private PlatformBrowser.Browser defaultBrowser = null;
         public PlatformBrowser.Browser SelectedBrowser
         {
             get
@@ -78,5 +109,11 @@ namespace MintPlayer.BrowserDialog
                 lvBrowsers.SelectedIndices.Add(browsers.IndexOf(item));
             }
         }
+
+        private void LvBrowsers_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            btnOK.Enabled = lvBrowsers.SelectedItems.Count != 0;
+        }
+
     }
 }
