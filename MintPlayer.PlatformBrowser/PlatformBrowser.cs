@@ -172,6 +172,10 @@ namespace MintPlayer.PlatformBrowser
 
             switch (defaultBrowserProgId)
             {
+                case "AppX4hxtad77fbk3jkkeerkrm0ze94wjf3s9": // htm, html
+                case "AppXd4nrz8ff68srnhf9t5a8sbjyar1cr723": // pdf
+                case "AppXde74bfzw9j31bzhcvsrxsyjnhhbq66cs": // svg
+                case "AppXcc58vyzkbjbs4ky0mxrmxf8278rk9b3t": // xml
                 case "AppXq0fevzme2pys62n3e0fbqa7peapykr8v":
                     // Edge
                     return browsers.FirstOrDefault(
