@@ -3,6 +3,7 @@ using System.Linq;
 using Microsoft.Win32;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 
 namespace MintPlayer.PlatformBrowser
 {
@@ -88,6 +89,7 @@ namespace MintPlayer.PlatformBrowser
                         KeyName = browserName,
                         Name = (string)browserKey.GetValue(null),
                         ExecutablePath = executablePath,
+                        Version = FileVersionInfo.GetVersionInfo(executablePath),
                         IconPath = iconValid ? iconParts[0] : executablePath,
                         IconIndex = !iconValid
                             ? 0
@@ -120,12 +122,14 @@ namespace MintPlayer.PlatformBrowser
                 {
                     if (System.IO.File.Exists($@"{edgeFolder}\MicrosoftEdge.exe"))
                     {
+                        var edgePath = $@"{edgeFolder}\MicrosoftEdge.exe";
                         result.Add(new Browser
                         {
                             KeyName = "Microsoft Edge",
                             Name = "Microsoft Edge",
-                            ExecutablePath = $@"{edgeFolder}\MicrosoftEdge.exe",
-                            IconPath = $@"{edgeFolder}\MicrosoftEdge.exe",
+                            ExecutablePath = edgePath,
+                            Version = FileVersionInfo.GetVersionInfo(edgePath),
+                            IconPath = edgePath,
                             IconIndex = 0,
                             // http://mikenation.net/files/win-10-reg.txt
                             //FileAssociations = new ReadOnlyDictionary<string, object>(CreateDefaultFileAssociations("AppXde74bfzw9j31bzhcvsrxsyjnhhbq66cs")),

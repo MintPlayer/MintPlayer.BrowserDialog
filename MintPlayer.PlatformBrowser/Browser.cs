@@ -14,6 +14,8 @@ namespace MintPlayer.PlatformBrowser
         public string ExecutablePath { get; set; }
         public string IconPath { get; set; }
         public int IconIndex { get; set; }
+        public System.Diagnostics.FileVersionInfo Version { get; set; }
+
         /// <summary>List of file types (.html, .xhtml, ...) that are supported by this webbrowser</summary>
         public ReadOnlyDictionary<string, object> FileAssociations { get; set; }
         /// <summary>List of web protocols (HTTP, FTP, ...) that are supported by this webbrowser</summary>
