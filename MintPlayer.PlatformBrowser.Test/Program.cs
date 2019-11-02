@@ -11,7 +11,7 @@ namespace MintPlayer.PlatformBrowser.Test
             {
                 Console.WriteLine($"Browser: {browser.Name}");
                 Console.WriteLine($"Executable: {browser.ExecutablePath}");
-                Console.WriteLine($"Version: {browser.Version}");
+                Console.WriteLine($"Version: {browser.Version.ProductVersion}");
                 Console.WriteLine($"Icon path: {browser.IconPath}");
                 Console.WriteLine($"Icon index: {browser.IconIndex}");
                 Console.WriteLine();
