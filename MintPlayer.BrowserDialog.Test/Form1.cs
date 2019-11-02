@@ -22,7 +22,7 @@ namespace MintPlayer.BrowserDialog.Test
             var dialog = new BrowserDialog();
             if (dialog.ShowDialog() == DialogResult.OK)
             {
-                MessageBox.Show($"You picked {dialog.SelectedBrowser.Name}.\r\nThe executable path is {dialog.SelectedBrowser.ExecutablePath}");
+                MessageBox.Show($"You picked {dialog.SelectedBrowser.Name}.\r\nThe executable path is {dialog.SelectedBrowser.ExecutablePath}\r\nThe version is {dialog.SelectedBrowser.Version.ProductVersion}");
             }
         }
     }
