@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>Library</OutputType>
-    <TargetFramework>netcoreapp3.0</TargetFramework>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
     <UseWindowsForms>true</UseWindowsForms>
     <ApplicationIcon />
     <StartupObject />
@@ -14,12 +14,15 @@
     <RepositoryUrl>https://github.com/MintPlayer/BrowserDialog</RepositoryUrl>
     <RepositoryType>Git</RepositoryType>
     <PackageTags>Choose webbrowser</PackageTags>
-    <Version>1.0.4</Version>
+    <Version>1.1.0</Version>
+
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="MintPlayer.IconUtils" Version="1.0.2" />
-    <PackageReference Include="MintPlayer.PlatformBrowser" Version="1.0.5" />
+    <PackageReference Include="MintPlayer.PlatformBrowser" Version="1.1.0" />
   </ItemGroup>
 
 </Project>
