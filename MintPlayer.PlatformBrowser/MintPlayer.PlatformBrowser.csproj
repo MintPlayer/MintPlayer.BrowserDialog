@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
     <Authors>Pieterjan De Clippel</Authors>
     <Company>MintPlayer</Company>
     <Description>This package allows you to retrieve the web browsers (including Microsoft Edge) installed on the system.</Description>
@@ -10,7 +10,10 @@
     <RepositoryUrl>https://github.com/MintPlayer/PlatformBrowser</RepositoryUrl>
     <RepositoryType>Git</RepositoryType>
     <PackageTags>Get webbrowsers</PackageTags>
-    <Version>1.0.5</Version>
+    <Version>1.1.0</Version>
+
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
   </PropertyGroup>
 
   <ItemGroup>
