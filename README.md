@@ -1,4 +1,6 @@
 # BrowserDialog
+[![NuGet Version](https://img.shields.io/nuget/v/MintPlayer.BrowserDialog.svg?style=flat)](https://www.nuget.org/packages/MintPlayer.BrowserDialog/)
+
 ![Dialog that lets the user pick from the installed webbrowsers](https://github.com/MintPlayer/BrowserDialog/blob/master/BrowserDialog.png)
 ## NuGet package
 https://www.nuget.org/packages/MintPlayer.BrowserDialog/
