@@ -1,4 +1,7 @@
 # MintPlayer.PlatformBrowser
+[![NuGet Version](https://img.shields.io/nuget/v/MintPlayer.PlatformBrowser.svg?style=flat)](https://www.nuget.org/packages/MintPlayer.PlatformBrowser)
+[![NuGet](https://img.shields.io/nuget/dt/MintPlayer.PlatformBrowser.svg?style=flat)](https://www.nuget.org/packages/MintPlayer.PlatformBrowser)
+
 This package allows you to retrieve the web browsers (including Microsoft Edge) installed on the system.
 ## NuGet package
 https://www.nuget.org/packages/MintPlayer.PlatformBrowser/
