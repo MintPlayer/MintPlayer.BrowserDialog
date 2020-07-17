@@ -1,5 +1,6 @@
 language: csharp
-mono: latest
+os: windows
+mono: none
 dotnet: 3.1.302
 before_install:
  - sudo apt-get update
