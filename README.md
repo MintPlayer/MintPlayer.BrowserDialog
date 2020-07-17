@@ -1,6 +1,7 @@
 # BrowserDialog
 [![NuGet Version](https://img.shields.io/nuget/v/MintPlayer.BrowserDialog.svg?style=flat)](https://www.nuget.org/packages/MintPlayer.BrowserDialog/)
 [![NuGet](https://img.shields.io/nuget/dt/MintPlayer.BrowserDialog.svg?style=flat)](https://www.nuget.org/packages/MintPlayer.BrowserDialog)
+[![Build Status](https://travis-ci.org/MintPlayer/MintPlayer.BrowserDialog.svg?branch=master)](https://travis-ci.org/MintPlayer/MintPlayer.BrowserDialog)
 
 Dialog that lets the user pick from the installed webbrowsers
 
