@@ -6,11 +6,11 @@
     <Company>MintPlayer</Company>
     <Description>This package allows you to retrieve the web browsers (including Microsoft Edge) installed on the system.</Description>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
-    <PackageProjectUrl>https://github.com/MintPlayer/PlatformBrowser</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/MintPlayer/PlatformBrowser</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/MintPlayer/MintPlayer.PlatformBrowser</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/MintPlayer/MintPlayer.PlatformBrowser</RepositoryUrl>
     <RepositoryType>Git</RepositoryType>
     <PackageTags>Get webbrowsers</PackageTags>
-    <Version>1.1.0</Version>
+    <Version>1.1.1</Version>
 
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
