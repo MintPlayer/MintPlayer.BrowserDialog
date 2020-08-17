@@ -3,6 +3,7 @@
 [![NuGet](https://img.shields.io/nuget/dt/MintPlayer.BrowserDialog.svg?style=flat)](https://www.nuget.org/packages/MintPlayer.BrowserDialog)
 [![Build Status](https://travis-ci.org/MintPlayer/MintPlayer.BrowserDialog.svg?branch=master)](https://travis-ci.org/MintPlayer/MintPlayer.BrowserDialog)
 ![.NET Core Desktop](https://github.com/MintPlayer/MintPlayer.BrowserDialog/workflows/.NET%20Core%20Desktop/badge.svg)
+[![License](https://img.shields.io/badge/License-Apache%202.0-green.svg)](https://opensource.org/licenses/Apache-2.0)
 
 Dialog that lets the user pick from the installed webbrowsers
 
