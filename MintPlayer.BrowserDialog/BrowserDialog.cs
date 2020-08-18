@@ -75,6 +75,7 @@ namespace MintPlayer.BrowserDialog
             }
             catch (Exception)
             {
+                // Don't interrupt the dialog
             }
             finally
             {
@@ -88,25 +89,32 @@ namespace MintPlayer.BrowserDialog
         }
 
         private ReadOnlyCollection<PlatformBrowser.Browser> browsers = new ReadOnlyCollection<PlatformBrowser.Browser>(new List<PlatformBrowser.Browser>());
-        private PlatformBrowser.Browser defaultBrowser = null;
+        private PlatformBrowser.Browser defaultBrowser;
         public PlatformBrowser.Browser SelectedBrowser
         {
             get
             {
                 if (lvBrowsers.SelectedIndices.Count == 0)
+                {
                     return null;
+                }
                 else
+                {
                     return browsers[lvBrowsers.SelectedIndices[0]];
+                }
             }
             set
             {
                 lvBrowsers.SelectedIndices.Clear();
-                if (value == null) return;
+                if (value == null)
+                {
+                    return;
+                }
 
-                var item = browsers.FirstOrDefault(b => b.Name == value.Name);
-                if (item == null) return;
-
-                lvBrowsers.SelectedIndices.Add(browsers.IndexOf(item));
+                if (browsers.Any(b => b.Name == value.Name))
+                {
+                    lvBrowsers.SelectedIndices.Add(browsers.IndexOf(item));
+                }
             }
         }
 
