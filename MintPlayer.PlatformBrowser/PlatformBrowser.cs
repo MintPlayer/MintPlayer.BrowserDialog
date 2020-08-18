@@ -4,6 +4,8 @@ using Microsoft.Win32;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using MintPlayer.PlatformBrowser.Exceptions;
+using System.Globalization;
 
 namespace MintPlayer.PlatformBrowser
 {
@@ -16,7 +18,9 @@ namespace MintPlayer.PlatformBrowser
 
             var internetKey = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\WOW6432Node\Clients\StartMenuInternet");
             if (internetKey == null)
+            {
                 internetKey = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Clients\StartMenuInternet");
+            }
 
             #endregion
 
@@ -43,12 +47,16 @@ namespace MintPlayer.PlatformBrowser
 
                     // ExecutablePath must be .exe
                     if (System.IO.Path.GetExtension(executablePath) != ".exe")
-                        throw new Exception("ExecutablePath must be .exe");
+                    {
+                        throw new BrowserException("ExecutablePath must be .exe");
+                    }
 
                     // IconPath must be .exe or .ico
                     var iconValid = true;
                     if (!new[] { ".exe", ".ico" }.Contains(System.IO.Path.GetExtension(iconParts[0])))
+                    {
                         iconValid = false;
+                    }
 
                     ReadOnlyDictionary<string, object> fileAssociations;
                     ReadOnlyDictionary<string, object> urlAssociations;
@@ -63,7 +71,9 @@ namespace MintPlayer.PlatformBrowser
                         #region Disconfigured browser installation, Add more browsers to this list
                         string browserIdFormat = string.Empty;
                         if (browserName.Equals("IEXPLORE.EXE"))
+                        {
                             browserIdFormat = "IE.AssocFile.{0}";
+                        }
                         #endregion
 
                         // Add a default list of file associations
@@ -80,6 +90,7 @@ namespace MintPlayer.PlatformBrowser
                     }
                     catch (Exception)
                     {
+                        // Use empty list for UrlAssociations
                         urlAssociations = new ReadOnlyDictionary<string, object>(new Dictionary<string, object>());
                     }
 
@@ -103,12 +114,11 @@ namespace MintPlayer.PlatformBrowser
                 }
                 catch (Exception)
                 {
+                    // Disconfigured browser
                 }
             }
 
             #endregion
-
-            //Debug.Print("You shall not pass");
 
             #region Check if Edge is installed
 
@@ -167,9 +177,11 @@ namespace MintPlayer.PlatformBrowser
         public static Browser GetDefaultBrowser(IEnumerable<Browser> browsers, Enums.eProtocolType protocolType)
         {
             var urlAssociationsKey = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Windows\Shell\Associations\URLAssociations");
-            var protocolName = Enum.GetName(typeof(Enums.eProtocolType), protocolType).ToLower();
+            var protocolName = Enum.GetName(typeof(Enums.eProtocolType), protocolType).ToLower(CultureInfo.InvariantCulture);
             if (!urlAssociationsKey.GetSubKeyNames().Contains(protocolName))
-                throw new Exception($"No url association for {protocolName}");
+            {
+                throw new BrowserException($"No url association for {protocolName}");
+            }
 
             var userChoiceKey = urlAssociationsKey.OpenSubKey($@"{protocolName}\UserChoice");
             var defaultBrowserProgId = userChoiceKey.GetValue("ProgId");
@@ -193,7 +205,7 @@ namespace MintPlayer.PlatformBrowser
                 default:
                     return browsers.FirstOrDefault(
                         b => b.UrlAssociations.Any(
-                            a => ((a.Key == protocolName) & (a.Value.Equals(defaultBrowserProgId)))
+                            a => (a.Key == protocolName) && a.Value.Equals(defaultBrowserProgId)
                         )
                     );
             }
@@ -220,28 +232,21 @@ namespace MintPlayer.PlatformBrowser
         /// <param name="fileType">The filetype you want to open</param>
         public static Browser GetDefaultBrowser(IEnumerable<Browser> browsers, Enums.eFileType fileType)
         {
-            var ext = Enum.GetName(typeof(Enums.eFileType), fileType).ToLower();
+            var ext = Enum.GetName(typeof(Enums.eFileType), fileType).ToLower(CultureInfo.InvariantCulture);
             var fileExtsKey = Registry.CurrentUser.OpenSubKey($@"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\FileExts");
             var subkeyNames = fileExtsKey.GetSubKeyNames();
 
             if (!subkeyNames.Contains($@".{ext}"))
-                throw new Exception("The specified filetype is not present in the registry");
+            {
+                throw new BrowserException("The specified filetype is not present in the registry");
+            }
 
             var fileTypeKey = fileExtsKey.OpenSubKey($@".{ext}\UserChoice");
             var progId = fileTypeKey.GetValue("ProgId");
 
             return browsers.FirstOrDefault(
-                b =>
-                {
-                    // Don't compare key AND value. Just check if the value exists in the list.
-                    var res = b.FileAssociations.Any(v => v.Value.Equals(progId));
-
-                    //var res = b.FileAssociations.Any(
-                    //     //fa => ((fa.Key == $".{ext}") & (Equals(fa.Value, progId)))
-                    //     fa => (Equals(fa[$".{ext}"], progId)))
-                    // );
-                    return res;
-                }
+                // Don't compare key AND value. Just check if the value exists in the list.
+                b => b.FileAssociations.Any(v => v.Value.Equals(progId))
             );
         }
 

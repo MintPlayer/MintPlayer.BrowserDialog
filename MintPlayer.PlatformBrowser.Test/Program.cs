@@ -2,7 +2,7 @@
 
 namespace MintPlayer.PlatformBrowser.Test
 {
-    class Program
+    static class Program
     {
         static void Main(string[] args)
         {
