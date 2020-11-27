@@ -113,7 +113,7 @@ namespace MintPlayer.BrowserDialog
 
                 if (browsers.Any(b => b.Name == value.Name))
                 {
-                    lvBrowsers.SelectedIndices.Add(browsers.IndexOf(item));
+                    lvBrowsers.SelectedIndices.Add(browsers.IndexOf(value));
                 }
             }
         }
