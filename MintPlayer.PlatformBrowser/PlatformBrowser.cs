@@ -157,16 +157,17 @@ namespace MintPlayer.PlatformBrowser
 
         private static Dictionary<string, object> CreateDefaultFileAssociations(string browserIdFormat)
         {
-            var associations = new Dictionary<string, object>(new[] {
-                new KeyValuePair<string, object>(".htm", string.Format(browserIdFormat, "HTM")),
-                new KeyValuePair<string, object>(".html", string.Format(browserIdFormat, "HTML")),
-                new KeyValuePair<string, object>(".pdf", string.Format(browserIdFormat, "PDF")),
-                new KeyValuePair<string, object>(".shtml", string.Format(browserIdFormat, "SHTML")),
-                new KeyValuePair<string, object>(".svg", string.Format(browserIdFormat, "SVG")),
-                new KeyValuePair<string, object>(".webp", string.Format(browserIdFormat, "WEBP")),
-                new KeyValuePair<string, object>(".xht", string.Format(browserIdFormat, "XHT")),
-                new KeyValuePair<string, object>(".xhtml", string.Format(browserIdFormat, "XHTML"))
-            });
+            var associations = new Dictionary<string, object>
+            {
+                {".htm", string.Format(browserIdFormat, "HTM")},
+                {".html", string.Format(browserIdFormat, "HTML")},
+                {".pdf", string.Format(browserIdFormat, "PDF")},
+                {".shtml", string.Format(browserIdFormat, "SHTML")},
+                {".svg", string.Format(browserIdFormat, "SVG")},
+                {".webp", string.Format(browserIdFormat, "WEBP")},
+                {".xht", string.Format(browserIdFormat, "XHT")},
+                {".xhtml", string.Format(browserIdFormat, "XHTML")}
+            };
             return associations;
         }
 
