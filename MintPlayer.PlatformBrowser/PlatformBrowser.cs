@@ -53,46 +53,39 @@ namespace MintPlayer.PlatformBrowser
                         // IconPath must be .exe or .ico
                         bool iconValid = new[] {".exe", ".ico"}.Contains(Path.GetExtension(iconParts[0]));
 
-                        ReadOnlyDictionary<string, object> fileAssociations;
-                        ReadOnlyDictionary<string, object> urlAssociations;
-                        try
+
+                        #region Disconfigured browser installation, Add more browsers to this list
+
+                        string browserIdFormat = string.Empty;
+                        if (browserName.Equals("IEXPLORE.EXE"))
                         {
-                            // Read the FileAssociations
-                            var fileAssociationsKey = browserKey.OpenSubKey(@"Capabilities\FileAssociations");
+                            browserIdFormat = "IE.AssocFile.{0}";
+                        }
+
+                        #endregion
+
+                        // Add a default list of file associations
+                        var associations = CreateDefaultFileAssociations(browserIdFormat);
+
+                        ReadOnlyDictionary<string, object> fileAssociations = new ReadOnlyDictionary<string, object>(associations);
+                        // Read the FileAssociations
+                        var fileAssociationsKey = browserKey.OpenSubKey(@"Capabilities\FileAssociations");
+                        if (fileAssociationsKey != null)
+                        {
                             fileAssociations = new ReadOnlyDictionary<string, object>(fileAssociationsKey
                                 .GetValueNames().ToDictionary(v => v, v => fileAssociationsKey.GetValue(v)));
                         }
-                        catch (Exception)
+                        // Use empty list for UrlAssociations
+                        var urlAssociations =
+                            new ReadOnlyDictionary<string, object>(new Dictionary<string, object>());
+                        // Read the UrlAssociations
+                        var urlAssociationsKey = browserKey.OpenSubKey(@"Capabilities\URLAssociations");
+                        if (urlAssociationsKey != null)
                         {
-                            #region Disconfigured browser installation, Add more browsers to this list
-
-                            string browserIdFormat = string.Empty;
-                            if (browserName.Equals("IEXPLORE.EXE"))
-                            {
-                                browserIdFormat = "IE.AssocFile.{0}";
-                            }
-
-                            #endregion
-
-                            // Add a default list of file associations
-                            var associations = CreateDefaultFileAssociations(browserIdFormat);
-
-                            fileAssociations = new ReadOnlyDictionary<string, object>(associations);
-                        }
-
-                        try
-                        {
-                            // Read the UrlAssociations
-                            var urlAssociationsKey = browserKey.OpenSubKey(@"Capabilities\URLAssociations");
-                            urlAssociations = new ReadOnlyDictionary<string, object>(urlAssociationsKey.GetValueNames()
+                            urlAssociations = new ReadOnlyDictionary<string, object>(urlAssociationsKey
+                                .GetValueNames()
                                 .ToDictionary(v => v, v => urlAssociationsKey.GetValue(v)));
                         }
-                        catch (Exception)
-                        {
-                            // Use empty list for UrlAssociations
-                            urlAssociations = new ReadOnlyDictionary<string, object>(new Dictionary<string, object>());
-                        }
-
 
                         var browser = new Browser
                         {
