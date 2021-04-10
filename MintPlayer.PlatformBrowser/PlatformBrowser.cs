@@ -136,7 +136,9 @@ namespace MintPlayer.PlatformBrowser
                             IconIndex = 0,
                             // http://mikenation.net/files/win-10-reg.txt
                             FileAssociations = CreateEdgeFileAssociations().AsReadOnly(),
-                            UrlAssociations = new ReadOnlyDictionary<string, object>(new Dictionary<string, object>())
+                            UrlAssociations = new ReadOnlyDictionary<string, object>(new Dictionary<string, object>()),
+
+                            IsApplicationGenerated = true,
                         });
                     }
                 }
@@ -213,7 +215,7 @@ namespace MintPlayer.PlatformBrowser
                     case "AppXq0fevzme2pys62n3e0fbqa7peapykr8v":
                         // Old Edge
                         return browsers.FirstOrDefault(
-                            b => ((b.KeyName == "Microsoft Edge") && (b.FileAssociations.Count == 0))
+                            b => ((b.KeyName == "Microsoft Edge") && b.IsApplicationGenerated)
                         );
                     case "IE.HTTP":
                         // Internet Explorer

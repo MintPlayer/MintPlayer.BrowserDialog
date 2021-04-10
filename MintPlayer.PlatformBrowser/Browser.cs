@@ -9,6 +9,9 @@ namespace MintPlayer.PlatformBrowser
         {
         }
 
+        /// <summary>Internal property that specifies whether the browser object was generated from code, and does not come from the registry.</summary>
+        internal bool IsApplicationGenerated { get; set; }
+
         internal string KeyName { get; set; }
         public string Name { get; set; }
         public string ExecutablePath { get; set; }
