@@ -9,11 +9,12 @@
     <RepositoryUrl>https://github.com/MintPlayer/MintPlayer.PlatformBrowser</RepositoryUrl>
     <RepositoryType>Git</RepositoryType>
     <PackageTags>Get webbrowsers</PackageTags>
-    <Version>1.1.2</Version>
+    <Version>2.0.0</Version>
 
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <TargetFrameworks>netstandard2.0;netstandard2.1</TargetFrameworks>
+    <PackageReleaseNotes>- 2.0.0: Target .NET Standard</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>
