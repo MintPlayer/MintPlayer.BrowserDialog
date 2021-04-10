@@ -9,14 +9,22 @@
     <RepositoryUrl>https://github.com/MintPlayer/MintPlayer.PlatformBrowser</RepositoryUrl>
     <RepositoryType>Git</RepositoryType>
     <PackageTags>Get webbrowsers</PackageTags>
-    <Version>2.1.0</Version>
+    <Version>2.2.0</Version>
 
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <TargetFrameworks>netstandard2.0;netstandard2.1</TargetFrameworks>
-    <PackageReleaseNotes>- 2.0.0: Target .NET Standard</PackageReleaseNotes>
   </PropertyGroup>
 
+  <Target Name="PreparePackageReleaseNotesFromFile" BeforeTargets="GenerateNuspec">
+    <ReadLinesFromFile File="./RELEASE-NOTES.txt">
+      <Output TaskParameter="Lines" ItemName="ReleaseNoteLines" />
+    </ReadLinesFromFile>
+    <PropertyGroup>
+      <PackageReleaseNotes>@(ReleaseNoteLines, '%0a')</PackageReleaseNotes>
+    </PropertyGroup>
+  </Target>
+  
   <ItemGroup>
     <Compile Remove="Enums\eAssociationType.cs" />
   </ItemGroup>

@@ -213,7 +213,7 @@ namespace MintPlayer.PlatformBrowser
                     case "AppXq0fevzme2pys62n3e0fbqa7peapykr8v":
                         // Old Edge
                         return browsers.FirstOrDefault(
-                            b => b.KeyName == "Microsoft Edge"
+                            b => ((b.KeyName == "Microsoft Edge") && (b.FileAssociations.Count == 0))
                         );
                     case "IE.HTTP":
                         // Internet Explorer

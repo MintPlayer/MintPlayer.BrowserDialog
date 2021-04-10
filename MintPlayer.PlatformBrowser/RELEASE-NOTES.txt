@@ -1,0 +1,6 @@
+﻿v 2.0.0
+- Target .NET Standard
+
+v 2.2.0
+- Distinguish old and new Edge
+- Use Release notes file
