@@ -7,6 +7,7 @@ using System.Diagnostics;
 using MintPlayer.PlatformBrowser.Exceptions;
 using System.Globalization;
 using System.IO;
+using MintPlayer.PlatformBrowser.Extensions;
 
 namespace MintPlayer.PlatformBrowser
 {
@@ -134,8 +135,7 @@ namespace MintPlayer.PlatformBrowser
                             IconPath = edgePath,
                             IconIndex = 0,
                             // http://mikenation.net/files/win-10-reg.txt
-                            //FileAssociations = new ReadOnlyDictionary<string, object>(CreateDefaultFileAssociations("AppXde74bfzw9j31bzhcvsrxsyjnhhbq66cs")),
-                            FileAssociations = new ReadOnlyDictionary<string, object>(CreateDefaultFileAssociations("AppX4hxtad77fbk3jkkeerkrm0ze94wjf3s9")),
+                            FileAssociations = CreateEdgeFileAssociations().AsReadOnly(),
                             UrlAssociations = new ReadOnlyDictionary<string, object>(new Dictionary<string, object>())
                         });
                     }
@@ -145,6 +145,19 @@ namespace MintPlayer.PlatformBrowser
             #endregion
 
             return new ReadOnlyCollection<Browser>(result);
+        }
+
+        private static Dictionary<string, object> CreateEdgeFileAssociations()
+        {
+            var edgeAssociations = new Dictionary<string, object>
+            {
+                { ".htm", "AppX4hxtad77fbk3jkkeerkrm0ze94wjf3s9" },
+                { ".html", "AppX4hxtad77fbk3jkkeerkrm0ze94wjf3s9" },
+                { ".pdf", "AppXd4nrz8ff68srnhf9t5a8sbjyar1cr723" },
+                { ".xml", "AppXcc58vyzkbjbs4ky0mxrmxf8278rk9b3t" },
+                { ".svg", "AppXde74bfzw9j31bzhcvsrxsyjnhhbq66cs" },
+            };
+            return edgeAssociations;
         }
 
         private static Dictionary<string, object> CreateDefaultFileAssociations(string browserIdFormat)
@@ -179,28 +192,37 @@ namespace MintPlayer.PlatformBrowser
             var userChoiceKey = urlAssociationsKey?.OpenSubKey($@"{protocolName}\UserChoice");
             var defaultBrowserProgId = userChoiceKey?.GetValue("ProgId");
 
-            switch (defaultBrowserProgId)
+            var foundNormalBrowser = browsers.FirstOrDefault(
+                b => b.UrlAssociations.Any(
+                    a => (a.Key == protocolName) && a.Value.Equals(defaultBrowserProgId)
+                )
+            );
+
+            if (foundNormalBrowser != null)
             {
-                case "AppX4hxtad77fbk3jkkeerkrm0ze94wjf3s9": // htm, html
-                case "AppXd4nrz8ff68srnhf9t5a8sbjyar1cr723": // pdf
-                case "AppXde74bfzw9j31bzhcvsrxsyjnhhbq66cs": // svg
-                case "AppXcc58vyzkbjbs4ky0mxrmxf8278rk9b3t": // xml
-                case "AppXq0fevzme2pys62n3e0fbqa7peapykr8v":
-                    // Edge
-                    return browsers.FirstOrDefault(
-                        b => b.KeyName == "Microsoft Edge"
-                    );
-                case "IE.HTTP":
-                    // Internet Explorer
-                    return browsers.FirstOrDefault(
-                        b => b.KeyName == "IEXPLORE.EXE"
-                    );
-                default:
-                    return browsers.FirstOrDefault(
-                        b => b.UrlAssociations.Any(
-                            a => (a.Key == protocolName) && a.Value.Equals(defaultBrowserProgId)
-                        )
-                    );
+                return foundNormalBrowser;
+            }
+            else
+            {
+                switch (defaultBrowserProgId)
+                {
+                    case "AppX4hxtad77fbk3jkkeerkrm0ze94wjf3s9": // htm, html
+                    case "AppXd4nrz8ff68srnhf9t5a8sbjyar1cr723": // pdf
+                    case "AppXde74bfzw9j31bzhcvsrxsyjnhhbq66cs": // svg
+                    case "AppXcc58vyzkbjbs4ky0mxrmxf8278rk9b3t": // xml
+                    case "AppXq0fevzme2pys62n3e0fbqa7peapykr8v":
+                        // Old Edge
+                        return browsers.FirstOrDefault(
+                            b => b.KeyName == "Microsoft Edge"
+                        );
+                    case "IE.HTTP":
+                        // Internet Explorer
+                        return browsers.FirstOrDefault(
+                            b => b.KeyName == "IEXPLORE.EXE"
+                        );
+                    default:
+                        return null;
+                }
             }
         }
 
@@ -246,6 +268,8 @@ namespace MintPlayer.PlatformBrowser
             );
         }
 
+        /// <summary>Get the default browser for the specified file type (html, pdf, svg, ...)</summary>
+        /// <param name="fileType">The filetype you want to open</param>
         public static Browser GetDefaultBrowser(Enums.eFileType fileType)
         {
             var browsers = GetInstalledBrowsers();

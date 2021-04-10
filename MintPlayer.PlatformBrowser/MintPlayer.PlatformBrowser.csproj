@@ -9,7 +9,7 @@
     <RepositoryUrl>https://github.com/MintPlayer/MintPlayer.PlatformBrowser</RepositoryUrl>
     <RepositoryType>Git</RepositoryType>
     <PackageTags>Get webbrowsers</PackageTags>
-    <Version>2.0.1</Version>
+    <Version>2.1.0</Version>
 
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
