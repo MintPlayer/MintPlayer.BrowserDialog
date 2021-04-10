@@ -28,7 +28,7 @@ jobs:
       run: dotnet restore
       env:
         NUGET_AUTH_TOKEN: ${{ github.token }}
-    	
+        
     - name: Build
       run: dotnet build --configuration Release --no-restore
       
