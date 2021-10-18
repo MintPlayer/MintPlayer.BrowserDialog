@@ -20,8 +20,8 @@ namespace MintPlayer.PlatformBrowser
 
             var machineInternetKey = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\WOW6432Node\Clients\StartMenuInternet") ??
                               Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Clients\StartMenuInternet");
-			var userInternetKey = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\WOW6432Node\Clients\StartMenuInternet") ??
-								  Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Clients\StartMenuInternet");
+            var userInternetKey = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\WOW6432Node\Clients\StartMenuInternet") ??
+                              Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Clients\StartMenuInternet");
             #endregion
 
             #region Loop through keys
