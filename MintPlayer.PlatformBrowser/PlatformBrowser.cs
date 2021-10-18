@@ -18,15 +18,16 @@ namespace MintPlayer.PlatformBrowser
         {
             #region Get registry key containing browser information
 
-            var internetKey = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\WOW6432Node\Clients\StartMenuInternet") ??
+            var machineInternetKey = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\WOW6432Node\Clients\StartMenuInternet") ??
                               Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Clients\StartMenuInternet");
-
+			var userInternetKey = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\WOW6432Node\Clients\StartMenuInternet") ??
+								  Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Clients\StartMenuInternet");
             #endregion
 
             #region Loop through keys
 
             var result = new List<Browser>();
-            if (internetKey != null)
+            foreach (var internetKey in new RegistryKey[]{machineInternetKey, userInternetKey}.Where(key => key != null))
                 foreach (var browserName in internetKey.GetSubKeyNames())
                 {
                     try
