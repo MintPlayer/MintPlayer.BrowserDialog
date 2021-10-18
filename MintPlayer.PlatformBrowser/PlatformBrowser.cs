@@ -16,7 +16,7 @@ namespace MintPlayer.PlatformBrowser
         /// <summary>Retrieves a list of installed browsers from the registry.</summary>
         public static ReadOnlyCollection<Browser> GetInstalledBrowsers()
         {
-            #region Get registry key containing browser information
+            #region Get registry keys containing browser information
 
             var machineInternetKey = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\WOW6432Node\Clients\StartMenuInternet") ??
                               Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Clients\StartMenuInternet");
@@ -27,7 +27,7 @@ namespace MintPlayer.PlatformBrowser
             #region Loop through keys
 
             var result = new List<Browser>();
-            foreach (var internetKey in new RegistryKey[]{machineInternetKey, userInternetKey}.Where(key => key != null))
+            foreach (var internetKey in new[] { machineInternetKey, userInternetKey }.Where(key => key != null))
                 foreach (var browserName in internetKey.GetSubKeyNames())
                 {
                     try
