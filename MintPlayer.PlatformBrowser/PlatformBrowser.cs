@@ -28,6 +28,7 @@ namespace MintPlayer.PlatformBrowser
 
             var result = new List<Browser>();
             foreach (var internetKey in new[] { machineInternetKey, userInternetKey }.Where(key => key != null))
+            {
                 foreach (var browserName in internetKey.GetSubKeyNames())
                 {
                     try
@@ -111,7 +112,7 @@ namespace MintPlayer.PlatformBrowser
                         // Disconfigured browser
                     }
                 }
-
+            }
             #endregion
 
             #region Check if Edge is installed
