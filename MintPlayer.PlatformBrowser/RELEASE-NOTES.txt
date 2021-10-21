@@ -4,3 +4,6 @@
 v 2.2.0
 - Distinguish old and new Edge
 - Use Release notes file
+
+v 2.3.0
+- Also include browsers that are installed only for the current user instead of globally
