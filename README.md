@@ -30,7 +30,7 @@ Simply call the following method:
 
 ## Contributors
 
-|                                      | Pull-request                                                    | Contributor                                       |
-|--------------------------------------|-----------------------------------------------------------------|---------------------------------------------------|
-| Target .NET Standard                 | https://github.com/MintPlayer/MintPlayer.PlatformBrowser/pull/1 | [merijndejonge](https://github.com/merijndejonge) |
-| Also lists browsers from CurrentUser | https://github.com/MintPlayer/MintPlayer.PlatformBrowser/pull/2 | [mderu](https://github.com/mderu)                 |
+| Pull-request                                                                                            | Contributor                                       |
+|---------------------------------------------------------------------------------------------------------|---------------------------------------------------|
+| [Target .NET Standard](https://github.com/MintPlayer/MintPlayer.PlatformBrowser/pull/1)                 | [merijndejonge](https://github.com/merijndejonge) |
+| [Also lists browsers from CurrentUser](https://github.com/MintPlayer/MintPlayer.PlatformBrowser/pull/2) | [mderu](https://github.com/mderu)                 |
