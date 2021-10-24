@@ -27,85 +27,88 @@ namespace MintPlayer.PlatformBrowser
             #region Loop through keys
 
             var result = new List<Browser>();
-            foreach (var internetKey in new[] { machineInternetKey, userInternetKey }.Where(key => key != null))
+            foreach (var internetKey in new[] { userInternetKey, machineInternetKey }.Where(key => key != null))
             {
-                foreach (var browserName in internetKey.GetSubKeyNames())
+                foreach (var browserKeyName in internetKey.GetSubKeyNames())
                 {
                     try
                     {
-                        // Key containing browser information
-                        var browserKey = internetKey.OpenSubKey(browserName);
-
-                        // Key containing executable path
-                        var commandKey = browserKey.OpenSubKey(@"shell\open\command");
-
-                        // Key containing icon path
-                        var iconKey = browserKey.OpenSubKey(@"DefaultIcon");
-                        var iconPath = (string) iconKey.GetValue(null);
-                        var iconParts = iconPath.Split(',');
-
-                        // Validate the values
-                        string executablePath = ((string) commandKey.GetValue(null)).Trim('"');
-
-                        // ExecutablePath must be .exe
-                        if (Path.GetExtension(executablePath) != ".exe")
+                        if (!result.Any(b => b.KeyName == browserKeyName))
                         {
-                            throw new BrowserException("ExecutablePath must be .exe");
+                            // Key containing browser information
+                            var browserKey = internetKey.OpenSubKey(browserKeyName);
+
+                            // Key containing executable path
+                            var commandKey = browserKey.OpenSubKey(@"shell\open\command");
+
+                            // Key containing icon path
+                            var iconKey = browserKey.OpenSubKey(@"DefaultIcon");
+                            var iconPath = (string)iconKey.GetValue(null);
+                            var iconParts = iconPath.Split(',');
+
+                            // Validate the values
+                            string executablePath = ((string)commandKey.GetValue(null)).Trim('"');
+
+                            // ExecutablePath must be .exe
+                            if (Path.GetExtension(executablePath) != ".exe")
+                            {
+                                throw new BrowserException("ExecutablePath must be .exe");
+                            }
+
+                            // IconPath must be .exe or .ico
+                            bool iconValid = new[] { ".exe", ".ico" }.Contains(Path.GetExtension(iconParts[0]));
+
+
+                            #region Disconfigured browser installation, Add more browsers to this list
+
+                            string browserIdFormat = string.Empty;
+                            if (browserKeyName.Equals("IEXPLORE.EXE"))
+                            {
+                                browserIdFormat = "IE.AssocFile.{0}";
+                            }
+
+                            #endregion
+
+                            // Add a default list of file associations
+                            var associations = CreateDefaultFileAssociations(browserIdFormat);
+
+                            ReadOnlyDictionary<string, object> fileAssociations = new ReadOnlyDictionary<string, object>(associations);
+                            // Read the FileAssociations
+                            var fileAssociationsKey = browserKey.OpenSubKey(@"Capabilities\FileAssociations");
+                            if (fileAssociationsKey != null)
+                            {
+                                fileAssociations = new ReadOnlyDictionary<string, object>(fileAssociationsKey
+                                    .GetValueNames().ToDictionary(v => v, v => fileAssociationsKey.GetValue(v)));
+                            }
+                            // Use empty list for UrlAssociations
+                            var urlAssociations =
+                                new ReadOnlyDictionary<string, object>(new Dictionary<string, object>());
+                            // Read the UrlAssociations
+                            var urlAssociationsKey = browserKey.OpenSubKey(@"Capabilities\URLAssociations");
+                            if (urlAssociationsKey != null)
+                            {
+                                urlAssociations = new ReadOnlyDictionary<string, object>(urlAssociationsKey
+                                    .GetValueNames()
+                                    .ToDictionary(v => v, v => urlAssociationsKey.GetValue(v)));
+                            }
+
+                            var browser = new Browser
+                            {
+                                KeyName = browserKeyName,
+                                Name = (string)browserKey.GetValue(null),
+                                ExecutablePath = executablePath,
+                                Version = FileVersionInfo.GetVersionInfo(executablePath),
+                                IconPath = iconValid ? iconParts[0] : executablePath,
+                                IconIndex = !iconValid
+                                    ? 0
+                                    : iconParts.Length > 1
+                                        ? Convert.ToInt32(iconParts[1])
+                                        : 0,
+                                FileAssociations = fileAssociations,
+                                UrlAssociations = urlAssociations
+                            };
+                            result.Add(browser);
                         }
-
-                        // IconPath must be .exe or .ico
-                        bool iconValid = new[] {".exe", ".ico"}.Contains(Path.GetExtension(iconParts[0]));
-
-
-                        #region Disconfigured browser installation, Add more browsers to this list
-
-                        string browserIdFormat = string.Empty;
-                        if (browserName.Equals("IEXPLORE.EXE"))
-                        {
-                            browserIdFormat = "IE.AssocFile.{0}";
-                        }
-
-                        #endregion
-
-                        // Add a default list of file associations
-                        var associations = CreateDefaultFileAssociations(browserIdFormat);
-
-                        ReadOnlyDictionary<string, object> fileAssociations = new ReadOnlyDictionary<string, object>(associations);
-                        // Read the FileAssociations
-                        var fileAssociationsKey = browserKey.OpenSubKey(@"Capabilities\FileAssociations");
-                        if (fileAssociationsKey != null)
-                        {
-                            fileAssociations = new ReadOnlyDictionary<string, object>(fileAssociationsKey
-                                .GetValueNames().ToDictionary(v => v, v => fileAssociationsKey.GetValue(v)));
-                        }
-                        // Use empty list for UrlAssociations
-                        var urlAssociations =
-                            new ReadOnlyDictionary<string, object>(new Dictionary<string, object>());
-                        // Read the UrlAssociations
-                        var urlAssociationsKey = browserKey.OpenSubKey(@"Capabilities\URLAssociations");
-                        if (urlAssociationsKey != null)
-                        {
-                            urlAssociations = new ReadOnlyDictionary<string, object>(urlAssociationsKey
-                                .GetValueNames()
-                                .ToDictionary(v => v, v => urlAssociationsKey.GetValue(v)));
-                        }
-
-                        var browser = new Browser
-                        {
-                            KeyName = browserName,
-                            Name = (string) browserKey.GetValue(null),
-                            ExecutablePath = executablePath,
-                            Version = FileVersionInfo.GetVersionInfo(executablePath),
-                            IconPath = iconValid ? iconParts[0] : executablePath,
-                            IconIndex = !iconValid
-                                ? 0
-                                : iconParts.Length > 1
-                                    ? Convert.ToInt32(iconParts[1])
-                                    : 0,
-                            FileAssociations = fileAssociations,
-                            UrlAssociations = urlAssociations
-                        };
-                        result.Add(browser);
                     }
                     catch (Exception)
                     {

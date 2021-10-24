@@ -7,3 +7,6 @@ v 2.2.0
 
 v 2.3.0
 - Also include browsers that are installed only for the current user instead of globally
+
+v 2.4.0
+- If browser is installed both for the user and globally on the system, only process the instance for the current user
