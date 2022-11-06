@@ -2,7 +2,7 @@
 
 	<PropertyGroup>
 		<OutputType>Library</OutputType>
-		<TargetFramework>netcoreapp3.1</TargetFramework>
+		<TargetFramework>net6.0-windows</TargetFramework>
 		<UseWindowsForms>true</UseWindowsForms>
 		<ApplicationIcon />
 		<StartupObject />
@@ -11,10 +11,10 @@
 		<Description>Dialog that let's you choose from the installed browsers (including Microsoft Edge) on the machine</Description>
 		<PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
 		<PackageProjectUrl>https://github.com/MintPlayer/MintPlayer.PlatformBrowser</PackageProjectUrl>
+		<PackageTags>Choose webbrowser</PackageTags>
 		<RepositoryUrl>https://github.com/MintPlayer/MintPlayer.PlatformBrowser</RepositoryUrl>
 		<RepositoryType>Git</RepositoryType>
-		<PackageTags>Choose webbrowser</PackageTags>
-		<Version>1.4.0</Version>
+		<Version>6.0.0</Version>
 
 		<IncludeSymbols>true</IncludeSymbols>
 		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
