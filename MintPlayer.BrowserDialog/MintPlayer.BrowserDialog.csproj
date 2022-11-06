@@ -10,11 +10,11 @@
 		<Company>MintPlayer</Company>
 		<Description>Dialog that let's you choose from the installed browsers (including Microsoft Edge) on the machine</Description>
 		<PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
-		<PackageProjectUrl>https://github.com/MintPlayer/MintPlayer.PlatformBrowser</PackageProjectUrl>
 		<PackageTags>Choose webbrowser</PackageTags>
-		<RepositoryUrl>https://github.com/MintPlayer/MintPlayer.PlatformBrowser</RepositoryUrl>
+		<PackageProjectUrl>https://github.com/MintPlayer/MintPlayer.BrowserDialog</PackageProjectUrl>
+		<RepositoryUrl>https://github.com/MintPlayer/MintPlayer.BrowserDialog</RepositoryUrl>
 		<RepositoryType>Git</RepositoryType>
-		<Version>6.0.0</Version>
+		<Version>6.0.1</Version>
 
 		<IncludeSymbols>true</IncludeSymbols>
 		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
