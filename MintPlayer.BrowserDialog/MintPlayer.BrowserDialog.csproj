@@ -14,7 +14,7 @@
 		<RepositoryUrl>https://github.com/MintPlayer/MintPlayer.BrowserDialog</RepositoryUrl>
 		<RepositoryType>Git</RepositoryType>
 		<PackageTags>Choose webbrowser</PackageTags>
-		<Version>7.0.0-preview.1</Version>
+		<Version>7.0.1-preview.1</Version>
 
 		<IncludeSymbols>true</IncludeSymbols>
 		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
