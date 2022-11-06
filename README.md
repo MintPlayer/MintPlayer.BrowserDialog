@@ -1,5 +1,8 @@
-# MintPlayer.PlatformBrowser
-This package allows you to retrieve the web browsers (including Microsoft Edge) installed on the system.
+# MintPlayer.BrowserDialog
+Dialog that lets the user pick from the installed webbrowsers
+
+## Preview
+![Dialog that lets the user pick from the installed webbrowsers](https://github.com/MintPlayer/MintPlayer.PlatformBrowser/blob/master/BrowserDialog.png)
 
 ## Version info
 
@@ -12,19 +15,24 @@ This package allows you to retrieve the web browsers (including Microsoft Edge) 
 | MintPlayer.PlatformBrowser | [![NuGet Version](https://img.shields.io/nuget/v/MintPlayer.PlatformBrowser.svg?style=flat)](https://www.nuget.org/packages/MintPlayer.PlatformBrowser) | [![NuGet Version](https://img.shields.io/nuget/vpre/MintPlayer.PlatformBrowser.svg?style=flat)](https://www.nuget.org/packages/MintPlayer.PlatformBrowser) | [![NuGet](https://img.shields.io/nuget/dt/MintPlayer.PlatformBrowser.svg?style=flat)](https://www.nuget.org/packages/MintPlayer.PlatformBrowser) |
 | MintPlayer.BrowserDialog   | [![NuGet Version](https://img.shields.io/nuget/v/MintPlayer.BrowserDialog.svg?style=flat)](https://www.nuget.org/packages/MintPlayer.BrowserDialog)     | [![NuGet Version](https://img.shields.io/nuget/vpre/MintPlayer.BrowserDialog.svg?style=flat)](https://www.nuget.org/packages/MintPlayer.BrowserDialog)     | [![NuGet](https://img.shields.io/nuget/dt/MintPlayer.BrowserDialog.svg?style=flat)](https://www.nuget.org/packages/MintPlayer.BrowserDialog)     |
 
-## Installation
-### NuGet package manager
+## MintPlayer.PlatformBrowser
+This package allows you to retrieve the web browsers (including Microsoft Edge) installed on the system.
+
+### Installation
+
+#### NuGet package manager
 Open the NuGet package manager and install the `MintPlayer.PlatformBrowser` package in the project
-### Package manager console
+
+#### Package manager console
 
     Install-Package MintPlayer.PlatformBrowser
 
-## Usage
+### Usage
 Simply call the following method:
 
     var browsers = PlatformBrowser.GetInstalledBrowsers();
 
-## Copy-n-paste code sample
+### Copy-n-paste code sample
 
     var browsers = PlatformBrowser.GetInstalledBrowsers();
     foreach (var browser in browsers)
@@ -34,6 +42,22 @@ Simply call the following method:
         Console.WriteLine($"Icon path: {browser.IconPath}");
         Console.WriteLine($"Icon index: {browser.IconIndex}");
         Console.WriteLine();
+    }
+	
+## MintPlayer.BrowserDialog
+
+### Installation
+#### NuGet package manager
+Open the NuGet package manager and install the **MintPlayer.BrowserDialog** package in the project
+#### Package manager console
+    Install-Package MintPlayer.BrowserDialog
+
+### Usage
+
+    var dialog = new BrowserDialog();
+    if (dialog.ShowDialog() == DialogResult.OK)
+    {
+        MessageBox.Show($"You picked {dialog.SelectedBrowser.Name}.\r\nThe executable path is {dialog.SelectedBrowser.ExecutablePath}");
     }
 
 ## Contributors
