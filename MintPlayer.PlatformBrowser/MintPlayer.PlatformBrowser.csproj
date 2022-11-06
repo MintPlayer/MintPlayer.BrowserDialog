@@ -2,7 +2,7 @@
 
 	<PropertyGroup>
 		<OutputType>Library</OutputType>
-		<TargetFrameworks>netstandard2.0;netstandard2.1</TargetFrameworks>
+		<TargetFramework>net7.0</TargetFramework>
 		<Authors>Pieterjan De Clippel</Authors>
 		<Company>MintPlayer</Company>
 		<Description>This package allows you to retrieve the web browsers (including Microsoft Edge) installed on the system.</Description>
@@ -11,7 +11,7 @@
 		<PackageTags>Get webbrowsers</PackageTags>
 		<RepositoryUrl>https://github.com/MintPlayer/MintPlayer.PlatformBrowser</RepositoryUrl>
 		<RepositoryType>Git</RepositoryType>
-		<Version>2.5.0</Version>
+		<Version>7.0.0-preview.1</Version>
 
 		<IncludeSymbols>true</IncludeSymbols>
 		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
