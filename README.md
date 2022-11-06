@@ -1,16 +1,24 @@
 # MintPlayer.PlatformBrowser
-[![NuGet Version](https://img.shields.io/nuget/v/MintPlayer.PlatformBrowser.svg?style=flat)](https://www.nuget.org/packages/MintPlayer.PlatformBrowser)
-[![NuGet](https://img.shields.io/nuget/dt/MintPlayer.PlatformBrowser.svg?style=flat)](https://www.nuget.org/packages/MintPlayer.PlatformBrowser)
-[![Build Status](https://travis-ci.org/MintPlayer/MintPlayer.PlatformBrowser.svg?branch=master)](https://travis-ci.org/MintPlayer/MintPlayer.PlatformBrowser)
-[![License](https://img.shields.io/badge/License-Apache%202.0-green.svg)](https://opensource.org/licenses/Apache-2.0)
-[![Codacy Badge](https://app.codacy.com/project/badge/Grade/c0cc807ae50645ca909b68c95f2275d0)](https://www.codacy.com/gh/MintPlayer/MintPlayer.PlatformBrowser?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=MintPlayer/MintPlayer.PlatformBrowser&amp;utm_campaign=Badge_Grade)
-
 This package allows you to retrieve the web browsers (including Microsoft Edge) installed on the system.
+
+## Version info
+
+| License                                                                                                               | Build status                                                                                           | Code coverage | Code quality |
+|-----------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------|---------------|--------------|
+| [![License](https://img.shields.io/badge/License-Apache%202.0-green.svg)](https://opensource.org/licenses/Apache-2.0) | ![.NET Core](https://github.com/MintPlayer/MintPlayer.PlatformBrowser/workflows/.NET%20Core/badge.svg) |               | [![Codacy Badge](https://app.codacy.com/project/badge/Grade/c0cc807ae50645ca909b68c95f2275d0)](https://www.codacy.com/gh/MintPlayer/MintPlayer.PlatformBrowser?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=MintPlayer/MintPlayer.PlatformBrowser&amp;utm_campaign=Badge_Grade) |
+
+| Package                    | Release                                                                                                                                                 | Preview                                                                                                                                                    | Downloads |
+|----------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------|-----------|
+| MintPlayer.PlatformBrowser | [![NuGet Version](https://img.shields.io/nuget/v/MintPlayer.PlatformBrowser.svg?style=flat)](https://www.nuget.org/packages/MintPlayer.PlatformBrowser) | [![NuGet Version](https://img.shields.io/nuget/vpre/MintPlayer.PlatformBrowser.svg?style=flat)](https://www.nuget.org/packages/MintPlayer.PlatformBrowser) | [![NuGet](https://img.shields.io/nuget/dt/MintPlayer.PlatformBrowser.svg?style=flat)](https://www.nuget.org/packages/MintPlayer.PlatformBrowser) |
+| MintPlayer.BrowserDialog   | [![NuGet Version](https://img.shields.io/nuget/v/MintPlayer.BrowserDialog.svg?style=flat)](https://www.nuget.org/packages/MintPlayer.BrowserDialog)     | [![NuGet Version](https://img.shields.io/nuget/vpre/MintPlayer.BrowserDialog.svg?style=flat)](https://www.nuget.org/packages/MintPlayer.BrowserDialog)     | [![NuGet](https://img.shields.io/nuget/dt/MintPlayer.BrowserDialog.svg?style=flat)](https://www.nuget.org/packages/MintPlayer.BrowserDialog)     |
+
 ## Installation
 ### NuGet package manager
-Open the NuGet package manager and install the **MintPlayer.PlatformBrowser** package in the project
+Open the NuGet package manager and install the `MintPlayer.PlatformBrowser` package in the project
 ### Package manager console
-Install-Package MintPlayer.PlatformBrowser
+
+    Install-Package MintPlayer.PlatformBrowser
+
 ## Usage
 Simply call the following method:
 
