@@ -1,16 +1,13 @@
-name: .NET Core
+name: build-master
 
 on:
   push:
-    branches:
-      - '**'
-      - '!master'
-      - '!release/**'
+    branches: [ master ]
 
 jobs:
   build:
 
-    name: build-any
+    name: build-master
     runs-on: ubuntu-latest
 
     steps:
@@ -21,6 +18,7 @@ jobs:
       uses: actions/setup-dotnet@v2.1.0
       with:
         dotnet-version: 3.1.301
+        # Authenticates packages to push to GPR
         source-url: https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json
       env:
         NUGET_AUTH_TOKEN: '%NUGET_AUTH_TOKEN%'
@@ -37,5 +35,5 @@ jobs:
       run: dotnet test --no-restore --verbosity normal
       
     - name: Pack
-      run: dotnet pack --no-build --configuration Debug
+      run: dotnet pack --no-build --configuration Debug MintPlayer.PlatformBrowser/MintPlayer.PlatformBrowser.csproj
       
