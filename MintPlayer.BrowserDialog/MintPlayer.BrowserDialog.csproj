@@ -3,9 +3,10 @@
 	<PropertyGroup>
 		<OutputType>Library</OutputType>
 		<TargetFramework>net7.0-windows</TargetFramework>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
 		<UseWindowsForms>true</UseWindowsForms>
-		<ApplicationIcon />
-		<StartupObject />
+		
 		<Authors>Pieterjan De Clippel</Authors>
 		<Company>MintPlayer</Company>
 		<Description>Dialog that let's you choose from the installed browsers (including Microsoft Edge) on the machine</Description>
@@ -14,7 +15,7 @@
 		<RepositoryUrl>https://github.com/MintPlayer/MintPlayer.BrowserDialog</RepositoryUrl>
 		<RepositoryType>Git</RepositoryType>
 		<PackageTags>Choose webbrowser</PackageTags>
-		<Version>7.0.1-preview.1</Version>
+		<Version>7.0.1</Version>
 
 		<IncludeSymbols>true</IncludeSymbols>
 		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
