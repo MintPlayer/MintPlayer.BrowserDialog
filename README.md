@@ -6,9 +6,9 @@ Dialog that lets the user pick from the installed webbrowsers
 
 ## Version info
 
-| License                                                                                                               | Build status                                                                                           | Code coverage | Code quality |
-|-----------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------|---------------|--------------|
-| [![License](https://img.shields.io/badge/License-Apache%202.0-green.svg)](https://opensource.org/licenses/Apache-2.0) | ![.NET Core](https://github.com/MintPlayer/MintPlayer.PlatformBrowser/workflows/.NET%20Core/badge.svg) |               | [![Codacy Badge](https://app.codacy.com/project/badge/Grade/c0cc807ae50645ca909b68c95f2275d0)](https://www.codacy.com/gh/MintPlayer/MintPlayer.PlatformBrowser?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=MintPlayer/MintPlayer.PlatformBrowser&amp;utm_campaign=Badge_Grade) |
+| License                                                                                                               | Build status                                                                                           |
+|-----------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------|
+| [![License](https://img.shields.io/badge/License-Apache%202.0-green.svg)](https://opensource.org/licenses/Apache-2.0) | ![.NET Core](https://github.com/MintPlayer/MintPlayer.BrowserDialog/workflows/.NET%20Core/badge.svg)   |
 
 | Package                    | Release                                                                                                                                                 | Preview                                                                                                                                                    | Downloads |
 |----------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------|-----------|
