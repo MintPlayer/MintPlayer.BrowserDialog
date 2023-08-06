@@ -1,8 +1,12 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 		<OutputType>Library</OutputType>
 		<TargetFramework>net6.0-windows</TargetFramework>
+		<!-- Used for CI/CD on Ubuntu -->
+		<EnableWindowsTargeting>true</EnableWindowsTargeting>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
 		<UseWindowsForms>true</UseWindowsForms>
 		<ApplicationIcon />
 		<StartupObject />
@@ -14,6 +18,7 @@
 		<PackageProjectUrl>https://github.com/MintPlayer/MintPlayer.BrowserDialog</PackageProjectUrl>
 		<RepositoryUrl>https://github.com/MintPlayer/MintPlayer.BrowserDialog</RepositoryUrl>
 		<RepositoryType>Git</RepositoryType>
+		<PackageTags>Choose webbrowser</PackageTags>
 		<Version>6.0.1</Version>
 
 		<IncludeSymbols>true</IncludeSymbols>
@@ -25,10 +30,10 @@
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
-		<PackageReference Include="MintPlayer.IconUtils" Version="1.0.4" />
 	</ItemGroup>
 
 	<ItemGroup>
+		<ProjectReference Include="..\MintPlayer.IconUtils\MintPlayer.IconUtils.csproj" />
 		<ProjectReference Include="..\MintPlayer.PlatformBrowser\MintPlayer.PlatformBrowser.csproj" />
 	</ItemGroup>
 
