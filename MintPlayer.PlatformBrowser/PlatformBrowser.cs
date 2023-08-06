@@ -7,7 +7,6 @@ using System.Diagnostics;
 using MintPlayer.PlatformBrowser.Exceptions;
 using System.Globalization;
 using System.IO;
-using MintPlayer.PlatformBrowser.Extensions;
 
 namespace MintPlayer.PlatformBrowser
 {
