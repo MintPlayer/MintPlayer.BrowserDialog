@@ -4,6 +4,10 @@
 		<!-- Icon is only available on Windows -->
 		<!-- https://learn.microsoft.com/en-us/dotnet/core/compatibility/core-libraries/6.0/system-drawing-common-windows-only#reason-for-change -->
 		<TargetFramework>net7.0-windows</TargetFramework>
+		<!-- Used for CI/CD on Ubuntu -->
+		<EnableWindowsTargeting>true</EnableWindowsTargeting>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
 		<IncludeSymbols>true</IncludeSymbols>
 		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
 		<PackageId>MintPlayer.IconUtils</PackageId>

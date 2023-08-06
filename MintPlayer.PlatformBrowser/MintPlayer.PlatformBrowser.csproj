@@ -3,6 +3,8 @@
 	<PropertyGroup>
 		<OutputType>Library</OutputType>
 		<TargetFramework>net7.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
 		<Authors>Pieterjan De Clippel</Authors>
 		<Company>MintPlayer</Company>
 		<Description>This package allows you to retrieve the web browsers (including Microsoft Edge) installed on the system.</Description>

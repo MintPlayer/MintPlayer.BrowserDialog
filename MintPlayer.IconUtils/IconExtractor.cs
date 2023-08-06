@@ -1,185 +1,181 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Drawing;
-using System.IO;
 
-namespace MintPlayer.IconUtils
+namespace MintPlayer.IconUtils;
+
+public static class IconExtractor
 {
-    public static class IconExtractor
+    /// <summary>Splits up the different images in the icon.</summary>
+    /// <param name="filename">Path to the file.</param>
+    /// <returns></returns>
+    public static List<Icon> Split(string filename)
     {
-        /// <summary>Splits up the different images in the icon.</summary>
-        /// <param name="filename">Path to the file.</param>
-        /// <returns></returns>
-        public static List<Icon> Split(string filename)
+        // Check if filename is provided
+        if (string.IsNullOrEmpty(filename))
         {
-            // Check if filename is provided
-            if (string.IsNullOrEmpty(filename))
-            {
-                throw new ArgumentNullException(nameof(filename));
-            }
-
-            // Check if file exists
-            if (!File.Exists(filename))
-            {
-                throw new FileNotFoundException("File not found", filename);
-            }
-
-            // Load the icon
-            switch (Path.GetExtension(filename))
-            {
-                case ".exe":
-                    return ExtractIconsFromExe(filename);
-                case ".ico":
-                case ".cur":
-                    var icon = new Icon(filename);
-                    return ExtractImagesFromIcon(icon);
-                default:
-                    throw new InvalidOperationException(@"Input file must have one of following extensions: "".exe"", "".ico"", "".cur""");
-            }
+            throw new ArgumentNullException(nameof(filename));
         }
 
-        public static List<Icon> ExtractImagesFromIcon(Icon icon)
+        // Check if file exists
+        if (!File.Exists(filename))
         {
-            // Check if icon is provided
-            if (icon == null)
-            {
-                throw new ArgumentNullException(nameof(icon));
-            }
-
-            return Utils.IconUtils.Split(icon);
+            throw new FileNotFoundException("File not found", filename);
         }
 
-        private static List<Icon> ExtractIconsFromExe(string exeFileName)
+        // Load the icon
+        switch (Path.GetExtension(filename))
         {
-            // Handle to the icon
-            var hIcon = IntPtr.Zero;
+            case ".exe":
+                return ExtractIconsFromExe(filename);
+            case ".ico":
+            case ".cur":
+                var icon = new Icon(filename);
+                return ExtractImagesFromIcon(icon);
+            default:
+                throw new InvalidOperationException(@"Input file must have one of following extensions: "".exe"", "".ico"", "".cur""");
+        }
+    }
 
-            // Try to load the icon
-            try
+    public static List<Icon> ExtractImagesFromIcon(Icon icon)
+    {
+        // Check if icon is provided
+        if (icon == null)
+        {
+            throw new ArgumentNullException(nameof(icon));
+        }
+
+        return Utils.IconUtils.Split(icon);
+    }
+
+    private static List<Icon> ExtractIconsFromExe(string exeFileName)
+    {
+        // Handle to the icon
+        var hIcon = IntPtr.Zero;
+
+        // Try to load the icon
+        try
+        {
+            // Load icon from file
+            hIcon = DllImport.Kernel32.LoadLibraryEx(exeFileName, IntPtr.Zero, Constants.Kernel32.LOAD_LIBRARY_AS_DATAFILE);
+
+            if (hIcon == IntPtr.Zero)
             {
-                // Load icon from file
-                hIcon = DllImport.Kernel32.LoadLibraryEx(exeFileName, IntPtr.Zero, Constants.Kernel32.LOAD_LIBRARY_AS_DATAFILE);
+                throw new Win32Exception("Failed to load the icon from disk");
+            }
 
-                if (hIcon == IntPtr.Zero)
+            // Buffer to store the raw data
+            var dataBuffer = new List<byte[]>();
+
+            DllImport.ENUMRESNAMEPROC callback = (lpIcon, lpType, lpName, lParam) =>
+            {
+                // http://msdn.microsoft.com/en-us/library/ms997538.aspx
+
+                // RT_GROUP_ICON resource consists of a GRPICONDIR and GRPICONDIRENTRY's.
+                var dir = GetDataFromResource(lpIcon, Constants.Kernel32.RT_GROUP_ICON, lpName);
+
+                #region Calculate the size of an entire .icon file.
+                // GRPICONDIR.idCount
+                int count = BitConverter.ToUInt16(dir, 4);
+
+                // sizeof(ICONDIR) + sizeof(ICONDIRENTRY) * count
+                int len = 6 + 16 * count;
+                for (int i = 0; i < count; ++i)
                 {
-                    throw new Win32Exception("Failed to load the icon from disk");
+                    // GRPICONDIRENTRY.dwBytesInRes
+                    len += BitConverter.ToInt32(dir, 6 + 14 * i + 8);
                 }
+                #endregion
 
-                // Buffer to store the raw data
-                var dataBuffer = new List<byte[]>();
-
-                DllImport.ENUMRESNAMEPROC callback = (lpIcon, lpType, lpName, lParam) =>
+                using (var dst = new BinaryWriter(new MemoryStream(len)))
                 {
-                    // http://msdn.microsoft.com/en-us/library/ms997538.aspx
-
-                    // RT_GROUP_ICON resource consists of a GRPICONDIR and GRPICONDIRENTRY's.
-                    var dir = GetDataFromResource(lpIcon, Constants.Kernel32.RT_GROUP_ICON, lpName);
-
-                    #region Calculate the size of an entire .icon file.
-                    // GRPICONDIR.idCount
-                    int count = BitConverter.ToUInt16(dir, 4);
+                    // Copy GRPICONDIR to ICONDIR.
+                    dst.Write(dir, 0, 6);
 
                     // sizeof(ICONDIR) + sizeof(ICONDIRENTRY) * count
-                    int len = 6 + 16 * count;
+                    int picOffset = 6 + 16 * count;
+
                     for (int i = 0; i < count; ++i)
                     {
-                        // GRPICONDIRENTRY.dwBytesInRes
-                        len += BitConverter.ToInt32(dir, 6 + 14 * i + 8);
-                    }
-                    #endregion
+                        // Load the picture.
 
-                    using (var dst = new BinaryWriter(new MemoryStream(len)))
-                    {
-                        // Copy GRPICONDIR to ICONDIR.
-                        dst.Write(dir, 0, 6);
+                        // GRPICONDIRENTRY.nID
+                        ushort id = BitConverter.ToUInt16(dir, 6 + 14 * i + 12);
+                        var pic = GetDataFromResource(hIcon, Constants.Kernel32.RT_ICON, (IntPtr)id);
 
-                        // sizeof(ICONDIR) + sizeof(ICONDIRENTRY) * count
-                        int picOffset = 6 + 16 * count;
+                        // Copy GRPICONDIRENTRY to ICONDIRENTRY.
+                        dst.Seek(6 + 16 * i, SeekOrigin.Begin);
+                        // First 8bytes are identical.
+                        dst.Write(dir, 6 + 14 * i, 8);
+                        // ICONDIRENTRY.dwBytesInRes
+                        dst.Write(pic.Length);
+                        // ICONDIRENTRY.dwImageOffset
+                        dst.Write(picOffset);
 
-                        for (int i = 0; i < count; ++i)
-                        {
-                            // Load the picture.
+                        // Copy a picture.
+                        dst.Seek(picOffset, SeekOrigin.Begin);
+                        dst.Write(pic, 0, pic.Length);
 
-                            // GRPICONDIRENTRY.nID
-                            ushort id = BitConverter.ToUInt16(dir, 6 + 14 * i + 12);
-                            var pic = GetDataFromResource(hIcon, Constants.Kernel32.RT_ICON, (IntPtr)id);
-
-                            // Copy GRPICONDIRENTRY to ICONDIRENTRY.
-                            dst.Seek(6 + 16 * i, SeekOrigin.Begin);
-                            // First 8bytes are identical.
-                            dst.Write(dir, 6 + 14 * i, 8);
-                            // ICONDIRENTRY.dwBytesInRes
-                            dst.Write(pic.Length);
-                            // ICONDIRENTRY.dwImageOffset
-                            dst.Write(picOffset);
-
-                            // Copy a picture.
-                            dst.Seek(picOffset, SeekOrigin.Begin);
-                            dst.Write(pic, 0, pic.Length);
-
-                            picOffset += pic.Length;
-                        }
-
-                        dataBuffer.Add(((MemoryStream)dst.BaseStream).ToArray());
+                        picOffset += pic.Length;
                     }
 
-                    return true;
-                };
-
-                DllImport.Kernel32.EnumResourceNames(hIcon, Constants.Kernel32.RT_GROUP_ICON, callback, IntPtr.Zero);
-
-                var result = new List<Icon>();
-                for (int i = 0; i < dataBuffer.Count; i++)
-                {
-                    using (var ms = new MemoryStream(dataBuffer[i]))
-                    {
-                        result.Add(new Icon(ms));
-                    }
+                    dataBuffer.Add(((MemoryStream)dst.BaseStream).ToArray());
                 }
-                return result;
-            }
-            finally
+
+                return true;
+            };
+
+            DllImport.Kernel32.EnumResourceNames(hIcon, Constants.Kernel32.RT_GROUP_ICON, callback, IntPtr.Zero);
+
+            var result = new List<Icon>();
+            for (int i = 0; i < dataBuffer.Count; i++)
             {
-                if (hIcon != IntPtr.Zero)
+                using (var ms = new MemoryStream(dataBuffer[i]))
                 {
-                    DllImport.Kernel32.FreeLibrary(hIcon);
+                    result.Add(new Icon(ms));
                 }
             }
+            return result;
         }
-
-        private static byte[] GetDataFromResource(IntPtr hModule, IntPtr type, IntPtr name)
+        finally
         {
-            // Load the binary data from the specified resource.
-
-            IntPtr hResInfo = DllImport.Kernel32.FindResource(hModule, name, type);
-            if (hResInfo == IntPtr.Zero)
+            if (hIcon != IntPtr.Zero)
             {
-                throw new Win32Exception();
+                DllImport.Kernel32.FreeLibrary(hIcon);
             }
-
-            IntPtr hResData = DllImport.Kernel32.LoadResource(hModule, hResInfo);
-            if (hResData == IntPtr.Zero)
-            {
-                throw new Win32Exception();
-            }
-
-            IntPtr pResData = DllImport.Kernel32.LockResource(hResData);
-            if (pResData == IntPtr.Zero)
-            {
-                throw new Win32Exception();
-            }
-
-            uint size = DllImport.Kernel32.SizeofResource(hModule, hResInfo);
-            if (size == 0)
-            {
-                throw new Win32Exception();
-            }
-
-            byte[] buf = new byte[size];
-            System.Runtime.InteropServices.Marshal.Copy(pResData, buf, 0, buf.Length);
-
-            return buf;
         }
+    }
+
+    private static byte[] GetDataFromResource(IntPtr hModule, IntPtr type, IntPtr name)
+    {
+        // Load the binary data from the specified resource.
+
+        IntPtr hResInfo = DllImport.Kernel32.FindResource(hModule, name, type);
+        if (hResInfo == IntPtr.Zero)
+        {
+            throw new Win32Exception();
+        }
+
+        IntPtr hResData = DllImport.Kernel32.LoadResource(hModule, hResInfo);
+        if (hResData == IntPtr.Zero)
+        {
+            throw new Win32Exception();
+        }
+
+        IntPtr pResData = DllImport.Kernel32.LockResource(hResData);
+        if (pResData == IntPtr.Zero)
+        {
+            throw new Win32Exception();
+        }
+
+        uint size = DllImport.Kernel32.SizeofResource(hModule, hResInfo);
+        if (size == 0)
+        {
+            throw new Win32Exception();
+        }
+
+        byte[] buf = new byte[size];
+        System.Runtime.InteropServices.Marshal.Copy(pResData, buf, 0, buf.Length);
+
+        return buf;
     }
 }

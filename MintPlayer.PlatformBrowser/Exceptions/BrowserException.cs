@@ -1,11 +1,8 @@
-﻿using System;
+﻿namespace MintPlayer.PlatformBrowser.Exceptions;
 
-namespace MintPlayer.PlatformBrowser.Exceptions
+public class BrowserException : Exception
 {
-    public class BrowserException : Exception
+    public BrowserException(string message) : base(message)
     {
-        public BrowserException(string message) : base(message)
-        {
-        }
     }
 }
