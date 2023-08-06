@@ -13,6 +13,7 @@ Dialog that lets the user pick from the installed webbrowsers
 | Package                    | Release                                                                                                                                                 | Preview                                                                                                                                                    | Downloads |
 |----------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------|-----------|
 | MintPlayer.PlatformBrowser | [![NuGet Version](https://img.shields.io/nuget/v/MintPlayer.PlatformBrowser.svg?style=flat)](https://www.nuget.org/packages/MintPlayer.PlatformBrowser) | [![NuGet Version](https://img.shields.io/nuget/vpre/MintPlayer.PlatformBrowser.svg?style=flat)](https://www.nuget.org/packages/MintPlayer.PlatformBrowser) | [![NuGet](https://img.shields.io/nuget/dt/MintPlayer.PlatformBrowser.svg?style=flat)](https://www.nuget.org/packages/MintPlayer.PlatformBrowser) |
+| MintPlayer.IconUtils       | [![NuGet Version](https://img.shields.io/nuget/v/MintPlayer.IconUtils.svg?style=flat)](https://www.nuget.org/packages/MintPlayer.IconUtils)             | [![NuGet Version](https://img.shields.io/nuget/vpre/MintPlayer.IconUtils.svg?style=flat)](https://www.nuget.org/packages/MintPlayer.IconUtils)             | [![NuGet](https://img.shields.io/nuget/dt/MintPlayer.IconUtils.svg?style=flat)](https://www.nuget.org/packages/MintPlayer.IconUtils)             |
 | MintPlayer.BrowserDialog   | [![NuGet Version](https://img.shields.io/nuget/v/MintPlayer.BrowserDialog.svg?style=flat)](https://www.nuget.org/packages/MintPlayer.BrowserDialog)     | [![NuGet Version](https://img.shields.io/nuget/vpre/MintPlayer.BrowserDialog.svg?style=flat)](https://www.nuget.org/packages/MintPlayer.BrowserDialog)     | [![NuGet](https://img.shields.io/nuget/dt/MintPlayer.BrowserDialog.svg?style=flat)](https://www.nuget.org/packages/MintPlayer.BrowserDialog)     |
 
 ## MintPlayer.PlatformBrowser
@@ -44,6 +45,19 @@ Simply call the following method:
         Console.WriteLine();
     }
 	
+## MintPlayer.IconUtils
+
+### Installation
+#### NuGet package manager
+Open the NuGet package manager and install the **MintPlayer.IconUtils** package in the project
+#### Package manager console
+    Install-Package MintPlayer.IconUtils
+
+### Usage
+
+    var icon = IconExtractor.Split(icoPath);
+    var icons = IconExtractor.ExtractImagesFromIcon(icon);
+
 ## MintPlayer.BrowserDialog
 
 ### Installation
