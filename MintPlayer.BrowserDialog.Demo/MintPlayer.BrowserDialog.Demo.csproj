@@ -3,8 +3,10 @@
 	<PropertyGroup>
 		<OutputType>WinExe</OutputType>
 		<TargetFramework>net7.0-windows</TargetFramework>
-		<Nullable>enable</Nullable>
+		<!-- Used for CI/CD on Ubuntu -->
+		<EnableWindowsTargeting>true</EnableWindowsTargeting>
 		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
 		<UseWindowsForms>true</UseWindowsForms>
 		<IsPackable>false</IsPackable>
 	</PropertyGroup>
