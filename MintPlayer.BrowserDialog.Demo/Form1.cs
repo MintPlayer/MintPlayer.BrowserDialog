@@ -14,7 +14,7 @@ public partial class MainForm : Form
         {
             if (dialog.SelectedBrowser != null)
             {
-                MessageBox.Show($"You picked {dialog.SelectedBrowser.Name}.\r\nThe executable path is {dialog.SelectedBrowser.ExecutablePath}\r\nThe version is {dialog.SelectedBrowser.Version?.ProductVersion}");
+                MessageBox.Show($"You picked {dialog.SelectedBrowser.Name}.\r\nThe executable path is {dialog.SelectedBrowser.ExecutablePath}\r\nThe version is {dialog.SelectedBrowser.Version}");
             }
             else
             {
