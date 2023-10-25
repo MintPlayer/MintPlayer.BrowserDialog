@@ -2,7 +2,8 @@
 
 	<PropertyGroup>
 		<OutputType>Library</OutputType>
-		<TargetFramework>net7.0</TargetFramework>
+		<!-- Must be a specific windows version target -->
+		<TargetFrameworks>net7.0;net7.0-windows10.0.22621</TargetFrameworks>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<Authors>Pieterjan De Clippel</Authors>
@@ -13,10 +14,13 @@
 		<PackageTags>Get webbrowsers</PackageTags>
 		<RepositoryUrl>https://github.com/MintPlayer/MintPlayer.BrowserDialog</RepositoryUrl>
 		<RepositoryType>Git</RepositoryType>
-		<Version>7.0.2</Version>
+		<Version>7.1.0</Version>
 
 		<IncludeSymbols>true</IncludeSymbols>
 		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
+		
+		<!-- Used for CI/CD -->
+		<EnableWindowsTargeting>true</EnableWindowsTargeting>
 	</PropertyGroup>
 
 	<Target Name="PreparePackageReleaseNotesFromFile" BeforeTargets="GenerateNuspec">

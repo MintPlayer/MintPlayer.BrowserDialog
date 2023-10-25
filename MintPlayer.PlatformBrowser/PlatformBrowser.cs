@@ -3,6 +3,7 @@ using MintPlayer.PlatformBrowser.Exceptions;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Globalization;
+using System.Linq;
 
 namespace MintPlayer.PlatformBrowser;
 
@@ -99,8 +100,9 @@ public static class PlatformBrowser
                         {
                             KeyName = browserKeyName,
                             Name = (string?)browserKey.GetValue(null) ?? string.Empty,
+                            Source = EBrowserSource.Registry,
                             ExecutablePath = executablePath,
-                            Version = FileVersionInfo.GetVersionInfo(executablePath),
+                            Version = FileVersionInfo.GetVersionInfo(executablePath)?.ProductVersion,
                             IconPath = iconValid ? iconParts[0] : executablePath,
                             IconIndex = !iconValid
                                 ? 0
@@ -139,20 +141,43 @@ public static class PlatformBrowser
                         KeyName = "Microsoft Edge",
                         Name = "Microsoft Edge",
                         ExecutablePath = edgePath,
-                        Version = FileVersionInfo.GetVersionInfo(edgePath),
+                        Version = FileVersionInfo.GetVersionInfo(edgePath).ProductVersion,
                         IconPath = edgePath,
                         IconIndex = 0,
                         // http://mikenation.net/files/win-10-reg.txt
                         FileAssociations = CreateEdgeFileAssociations().AsReadOnly(),
                         UrlAssociations = new ReadOnlyDictionary<string, object>(new Dictionary<string, object>()),
 
-                        IsApplicationGenerated = true,
+                        Source = EBrowserSource.HardCoded,
                     });
                 }
             }
         }
 
         #endregion
+
+#if WINDOWS
+        var supportedExtensions = new[] { ".htm", ".html", ".pdf" };
+        var pm = new Windows.Management.Deployment.PackageManager();
+        var packages = pm.FindPackagesForUser(string.Empty)
+            .SelectMany(b => b.GetAppListEntries())
+            .Where(a => a.AppInfo.SupportedFileExtensions != null)
+            .Where(a => a.AppInfo.SupportedFileExtensions.Intersect(supportedExtensions).Any());
+        //  .ToArray();
+
+        result.AddRange(packages.Select(p => new Browser
+        {
+            Name = p.DisplayInfo.DisplayName,
+            IconPath = p.AppInfo.Package.Logo.LocalPath,
+            IconIndex = 0,
+            Version = p.AppInfo.Package.Id.Version.ToString(),
+            KeyName = null,
+            Source = EBrowserSource.PackageManager,
+            FileAssociations = p.AppInfo.SupportedFileExtensions.ToDictionary(x => x, x => (object)p.AppUserModelId).AsReadOnly(),
+            ExecutablePath = p.AppInfo.Package.InstalledPath,
+            UrlAssociations = new[] { "http", "https" }.ToDictionary(x => x, x => (object)p.AppUserModelId).AsReadOnly(),
+        }));
+#endif
 
         return new ReadOnlyCollection<Browser>(result);
     }
@@ -212,27 +237,39 @@ public static class PlatformBrowser
         {
             return foundNormalBrowser;
         }
-        else
+
+        var classesRootProgKey = Registry.ClassesRoot.OpenSubKey($@"{defaultBrowserProgId}\Shell\open");
+        var appUserModelId = classesRootProgKey.GetValue("AppUserModelID");
+
+        foundNormalBrowser = browsers.FirstOrDefault(
+            b => b.UrlAssociations.Any(
+                a => (a.Key == protocolName) && a.Value.Equals(appUserModelId)
+            )
+        );
+
+        if (foundNormalBrowser != null)
         {
-            switch (defaultBrowserProgId)
-            {
-                case "AppX4hxtad77fbk3jkkeerkrm0ze94wjf3s9": // htm, html
-                case "AppXd4nrz8ff68srnhf9t5a8sbjyar1cr723": // pdf
-                case "AppXde74bfzw9j31bzhcvsrxsyjnhhbq66cs": // svg
-                case "AppXcc58vyzkbjbs4ky0mxrmxf8278rk9b3t": // xml
-                case "AppXq0fevzme2pys62n3e0fbqa7peapykr8v":
-                    // Old Edge
-                    return browsers.FirstOrDefault(
-                        b => ((b.KeyName == "Microsoft Edge") && b.IsApplicationGenerated)
-                    );
-                case "IE.HTTP":
-                    // Internet Explorer
-                    return browsers.FirstOrDefault(
-                        b => b.KeyName == "IEXPLORE.EXE"
-                    );
-                default:
-                    return null;
-            }
+            return foundNormalBrowser;
+        }
+
+        switch (defaultBrowserProgId)
+        {
+            case "AppX4hxtad77fbk3jkkeerkrm0ze94wjf3s9": // htm, html
+            case "AppXd4nrz8ff68srnhf9t5a8sbjyar1cr723": // pdf
+            case "AppXde74bfzw9j31bzhcvsrxsyjnhhbq66cs": // svg
+            case "AppXcc58vyzkbjbs4ky0mxrmxf8278rk9b3t": // xml
+            case "AppXq0fevzme2pys62n3e0fbqa7peapykr8v":
+                // Old Edge
+                return browsers.FirstOrDefault(
+                    b => ((b.KeyName == "Microsoft Edge") && (b.Source == EBrowserSource.HardCoded))
+                );
+            case "IE.HTTP":
+                // Internet Explorer
+                return browsers.FirstOrDefault(
+                    b => b.KeyName == "IEXPLORE.EXE"
+                );
+            default:
+                return null;
         }
     }
 

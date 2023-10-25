@@ -31,25 +31,39 @@ public partial class BrowserDialog : Form
             browsers = PlatformBrowser.PlatformBrowser.GetInstalledBrowsers();
 
             // Loop through all browsers
+            var imageCounter = -1;
             for (var i = 0; i < browsers.Count; i++)
             {
                 var browser = browsers[i];
 
-                // Get image
-                var icon = IconExtractor.Split(browser.IconPath)[browser.IconIndex < 0 ? 0 : browser.IconIndex];
-                var icons = IconExtractor.ExtractImagesFromIcon(icon);
-                var largestSize = icons.Max(i => i.Width);
-                var largestIcon = icons.LastOrDefault(i => i.Width == largestSize);
-                if (largestIcon != null)
+                if (!string.IsNullOrEmpty(browser.IconPath))
                 {
-                    lvBrowsers.LargeImageList.Images.Add(largestIcon);
+                    if (new[] { ".ico", ".cur", ".exe" }.Contains(Path.GetExtension(browser.IconPath)))
+                    {
+                        // Get image
+                        var icon = IconExtractor.Split(browser.IconPath)[browser.IconIndex < 0 ? 0 : browser.IconIndex];
+                        var icons = IconExtractor.ExtractImagesFromIcon(icon);
+                        var largestSize = icons.Max(i => i.Width);
+                        var largestIcon = icons.LastOrDefault(i => i.Width == largestSize);
+                        if (largestIcon != null)
+                        {
+                            lvBrowsers.LargeImageList.Images.Add(largestIcon);
+                            imageCounter++;
+                        }
+                    }
+                    else
+                    {
+                        var image = Image.FromFile(browser.IconPath);
+                        lvBrowsers.LargeImageList.Images.Add(image);
+                        imageCounter++;
+                    }
                 }
 
                 lvBrowsers.Items.Add(new ListViewItem
                 {
                     Text = browser.Name,
                     Tag = browser.ExecutablePath.Trim('\"'),
-                    ImageIndex = i,
+                    ImageIndex = string.IsNullOrEmpty(browser.IconPath) ? -1 : imageCounter,
                 });
             }
 
