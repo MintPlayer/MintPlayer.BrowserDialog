@@ -170,7 +170,7 @@ public static class PlatformBrowser
             Name = p.DisplayInfo.DisplayName,
             IconPath = p.AppInfo.Package.Logo.LocalPath,
             IconIndex = 0,
-            Version = p.AppInfo.Package.Id.Version.ToString(),
+            Version = p.AppInfo.Package.Id.Version.ToFormattedString(),
             KeyName = null,
             Source = EBrowserSource.PackageManager,
             FileAssociations = p.AppInfo.SupportedFileExtensions.ToDictionary(x => x, x => (object)p.AppUserModelId).AsReadOnly(),
