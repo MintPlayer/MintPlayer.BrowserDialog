@@ -30,73 +30,114 @@ namespace MintPlayer.BrowserDialog
         /// </summary>
         private void InitializeComponent()
         {
-            this.btnOK = new System.Windows.Forms.Button();
-            this.btnCancel = new System.Windows.Forms.Button();
-            this.lvBrowsers = new System.Windows.Forms.ListView();
-            this.SuspendLayout();
+            btnOK = new Button();
+            btnCancel = new Button();
+            pnlParent = new Panel();
+            progressBar3 = new ProgressBar();
+            pnlLoading = new Panel();
+            lvBrowsers = new ListView();
+            pnlParent.SuspendLayout();
+            pnlLoading.SuspendLayout();
+            SuspendLayout();
             // 
             // btnOK
             // 
-            this.btnOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnOK.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.btnOK.Enabled = false;
-            this.btnOK.Location = new System.Drawing.Point(232, 234);
-            this.btnOK.Name = "btnOK";
-            this.btnOK.Size = new System.Drawing.Size(75, 25);
-            this.btnOK.TabIndex = 0;
-            this.btnOK.Text = "OK";
-            this.btnOK.UseVisualStyleBackColor = true;
+            btnOK.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            btnOK.DialogResult = DialogResult.OK;
+            btnOK.Enabled = false;
+            btnOK.Location = new Point(268, 270);
+            btnOK.Margin = new Padding(4, 3, 4, 3);
+            btnOK.Name = "btnOK";
+            btnOK.Size = new Size(88, 29);
+            btnOK.TabIndex = 0;
+            btnOK.Text = "OK";
+            btnOK.UseVisualStyleBackColor = true;
             // 
             // btnCancel
             // 
-            this.btnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btnCancel.Location = new System.Drawing.Point(313, 234);
-            this.btnCancel.Name = "btnCancel";
-            this.btnCancel.Size = new System.Drawing.Size(75, 25);
-            this.btnCancel.TabIndex = 1;
-            this.btnCancel.Text = "Annuleren";
-            this.btnCancel.UseVisualStyleBackColor = true;
+            btnCancel.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            btnCancel.DialogResult = DialogResult.Cancel;
+            btnCancel.Location = new Point(362, 270);
+            btnCancel.Margin = new Padding(4, 3, 4, 3);
+            btnCancel.Name = "btnCancel";
+            btnCancel.Size = new Size(88, 29);
+            btnCancel.TabIndex = 1;
+            btnCancel.Text = "Annuleren";
+            btnCancel.UseVisualStyleBackColor = true;
+            // 
+            // pnlLoading
+            // 
+            pnlLoading.Controls.Add(progressBar3);
+            pnlLoading.Dock = DockStyle.Fill;
+            pnlLoading.Location = new Point(0, 0);
+            pnlLoading.Name = "pnlLoading";
+            pnlLoading.Size = new Size(440, 252);
+            pnlLoading.TabIndex = 0;
             // 
             // lvBrowsers
             // 
-            this.lvBrowsers.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                | System.Windows.Forms.AnchorStyles.Left)
-                | System.Windows.Forms.AnchorStyles.Right)));
-            this.lvBrowsers.HideSelection = false;
-            this.lvBrowsers.SelectedIndexChanged += LvBrowsers_SelectedIndexChanged;
-            this.lvBrowsers.Location = new System.Drawing.Point(12, 12);
-            this.lvBrowsers.MultiSelect = false;
-            this.lvBrowsers.Name = "listView1";
-            this.lvBrowsers.Size = new System.Drawing.Size(376, 216);
-            this.lvBrowsers.TabIndex = 2;
-            this.lvBrowsers.UseCompatibleStateImageBehavior = false;
+            lvBrowsers.Dock = DockStyle.Fill;
+            lvBrowsers.Location = new Point(0, 0);
+            lvBrowsers.Margin = new Padding(4, 3, 4, 3);
+            lvBrowsers.MultiSelect = false;
+            lvBrowsers.Name = "lvBrowsers";
+            lvBrowsers.Size = new Size(440, 252);
+            lvBrowsers.TabIndex = 2;
+            lvBrowsers.UseCompatibleStateImageBehavior = false;
+            lvBrowsers.SelectedIndexChanged += LvBrowsers_SelectedIndexChanged;
+            // 
+            // pnlParent
+            // 
+            pnlParent.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            pnlParent.Controls.Add(lvBrowsers);
+            pnlParent.Controls.Add(pnlLoading);
+            pnlParent.Location = new Point(12, 12);
+            pnlParent.Name = "pnlParent";
+            pnlParent.Size = new Size(440, 252);
+            pnlParent.TabIndex = 3;
+            // 
+            // progressBar3
+            // 
+            progressBar3.Anchor = AnchorStyles.None;
+            progressBar3.Location = new Point(145, 119);
+            progressBar3.Name = "progressBar3";
+            progressBar3.Size = new Size(150, 14);
+            progressBar3.Style = ProgressBarStyle.Marquee;
+            progressBar3.TabIndex = 5;
+            progressBar3.Value = 50;
             // 
             // BrowserDialog
             // 
-            this.AcceptButton = this.btnOK;
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.CancelButton = this.btnCancel;
-            this.ClientSize = new System.Drawing.Size(400, 271);
-            this.Controls.Add(this.lvBrowsers);
-            this.Controls.Add(this.btnOK);
-            this.Controls.Add(this.btnCancel);
-            this.MaximizeBox = false;
-            this.MinimizeBox = false;
-            this.Name = "BrowserDialog";
-            this.Text = "Pick a browser";
-            this.Load += new System.EventHandler(this.BrowserDialog_Load);
-            this.Shown += new System.EventHandler(this.BrowserDialog_Shown);
-            this.ResumeLayout(false);
-
+            AcceptButton = btnOK;
+            AutoScaleDimensions = new SizeF(7F, 15F);
+            AutoScaleMode = AutoScaleMode.Font;
+            CancelButton = btnCancel;
+            ClientSize = new Size(464, 313);
+            Controls.Add(pnlParent);
+            Controls.Add(btnOK);
+            Controls.Add(btnCancel);
+            Margin = new Padding(4, 3, 4, 3);
+            MaximizeBox = false;
+            MinimizeBox = false;
+            Name = "BrowserDialog";
+            Text = "Pick a browser";
+            Load += BrowserDialog_Load;
+            Shown += BrowserDialog_Shown;
+            pnlParent.ResumeLayout(false);
+            pnlLoading.ResumeLayout(false);
+            ResumeLayout(false);
         }
 
         #endregion
 
-        private System.Windows.Forms.Button btnOK;
-        private System.Windows.Forms.Button btnCancel;
-        private System.Windows.Forms.ListView lvBrowsers;
+        private Button btnOK;
+        private Button btnCancel;
+        private Panel pnlLoading;
+        private ListView lvBrowsers;
+        private Panel pnlParent;
+        private ProgressBar progressBar1;
+        private ProgressBar progressBar3;
+        private ProgressBar progressBar2;
     }
 }
 

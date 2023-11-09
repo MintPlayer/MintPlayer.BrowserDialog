@@ -10,10 +10,14 @@ public partial class BrowserDialog : Form
         InitializeComponent();
     }
 
-    private void BrowserDialog_Load(object sender, EventArgs e)
+    private async void BrowserDialog_Load(object sender, EventArgs e)
     {
         try
         {
+            pnlLoading.Visible = true;
+            lvBrowsers.Visible = false;
+
+
             // Suspend the drawing of the listview
             lvBrowsers.SuspendLayout();
 
@@ -28,7 +32,7 @@ public partial class BrowserDialog : Form
             };
 
             // Get all browsers on the system
-            browsers = PlatformBrowser.PlatformBrowser.GetInstalledBrowsers();
+            browsers = await PlatformBrowser.PlatformBrowser.GetInstalledBrowsers();
 
             // Loop through all browsers
             var imageCounter = -1;
@@ -41,8 +45,9 @@ public partial class BrowserDialog : Form
                     if (new[] { ".ico", ".cur", ".exe" }.Contains(Path.GetExtension(browser.IconPath)))
                     {
                         // Get image
-                        var icon = IconExtractor.Split(browser.IconPath)[browser.IconIndex < 0 ? 0 : browser.IconIndex];
-                        var icons = IconExtractor.ExtractImagesFromIcon(icon);
+                        var split = await IconExtractor.Split(browser.IconPath);
+                        var icon = split[browser.IconIndex < 0 ? 0 : browser.IconIndex];
+                        var icons = await IconExtractor.ExtractImagesFromIcon(icon);
                         var largestSize = icons.Max(i => i.Width);
                         var largestIcon = icons.LastOrDefault(i => i.Width == largestSize);
                         if (largestIcon != null)
@@ -68,7 +73,7 @@ public partial class BrowserDialog : Form
             }
 
             // Get default browser
-            defaultBrowser = PlatformBrowser.PlatformBrowser.GetDefaultBrowser(browsers.ToList(), PlatformBrowser.Enums.EProtocolType.Http);
+            defaultBrowser = await PlatformBrowser.PlatformBrowser.GetDefaultBrowser(browsers.ToList(), PlatformBrowser.Enums.EProtocolType.Http);
 
             // Select default browser
             if (browsers.Contains(defaultBrowser!))
@@ -87,6 +92,8 @@ public partial class BrowserDialog : Form
         }
         finally
         {
+            pnlLoading.Visible = false;
+            lvBrowsers.Visible = true;
             lvBrowsers.ResumeLayout();
         }
     }

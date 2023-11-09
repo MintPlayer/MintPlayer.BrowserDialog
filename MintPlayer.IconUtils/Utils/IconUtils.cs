@@ -52,21 +52,25 @@ internal static class IconUtils
 
     private delegate byte[] GetIconDataDelegate(Icon icon);
     private static GetIconDataDelegate getIconData;
-    private static byte[] GetIconData(Icon icon)
+    private static async Task<byte[]> GetIconData(Icon icon)
     {
-        var data = getIconData(icon);
-        if (data != null)
+        var result = await Task.Run(() =>
         {
-            return data;
-        }
-        else
-        {
-            using (var ms = new MemoryStream())
+            var data = getIconData(icon);
+            if (data != null)
             {
-                icon.Save(ms);
-                return ms.ToArray();
+                return data;
             }
-        }
+            else
+            {
+                using (var ms = new MemoryStream())
+                {
+                    icon.Save(ms);
+                    return ms.ToArray();
+                }
+            }
+        });
+        return result;
     }
 
 
@@ -76,7 +80,7 @@ internal static class IconUtils
     /// </summary>
     /// <param name="icon">A System.Drawing.Icon to be split.</param>
     /// <returns>An array of System.Drawing.Icon.</returns>
-    internal static List<Icon> Split(Icon icon)
+    internal static async Task<List<Icon>> Split(Icon icon)
     {
         if (icon == null)
         {
@@ -84,39 +88,44 @@ internal static class IconUtils
         }
 
         // Get an .ico file in memory, then split it into separate icons.
-        var src = GetIconData(icon);
-        var splitIcons = new List<Icon>();
-        
-        // ICONDIR.wImageCount
-        int count = BitConverter.ToUInt16(src, 4);
+        var src = await GetIconData(icon);
 
-        for (int i = 0; i < count; i++)
+        var result = await Task.Run(() =>
         {
-            // ICONDIR.dwBytesInRes
-            int length = BitConverter.ToInt32(src, 6 + 16 * i + 8);
-            // ICONDIR.dwImageOffset
-            int offset = BitConverter.ToInt32(src, 6 + 16 * i + 12);
+            var splitIcons = new List<Icon>();
+            // ICONDIR.wImageCount
+            int count = BitConverter.ToUInt16(src, 4);
 
-            using (var dst = new BinaryWriter(new MemoryStream(6 + 16 + length)))
+            for (int i = 0; i < count; i++)
             {
-                // Copy ICONDIR and set idCount to 1.
-                dst.Write(src, 0, 4);
-                dst.Write((short)1);
+                // ICONDIR.dwBytesInRes
+                int length = BitConverter.ToInt32(src, 6 + 16 * i + 8);
+                // ICONDIR.dwImageOffset
+                int offset = BitConverter.ToInt32(src, 6 + 16 * i + 12);
 
-                // Copy ICONDIRENTRY and set dwImageOffset to 22.
-                dst.Write(src, 6 + 16 * i, 12); // ICONDIRENTRY except dwImageOffset
-                dst.Write(22);                   // ICONDIRENTRY.dwImageOffset
+                using (var dst = new BinaryWriter(new MemoryStream(6 + 16 + length)))
+                {
+                    // Copy ICONDIR and set idCount to 1.
+                    dst.Write(src, 0, 4);
+                    dst.Write((short)1);
 
-                // Copy a picture.
+                    // Copy ICONDIRENTRY and set dwImageOffset to 22.
+                    dst.Write(src, 6 + 16 * i, 12); // ICONDIRENTRY except dwImageOffset
+                    dst.Write(22);                   // ICONDIRENTRY.dwImageOffset
 
-                dst.Write(src, offset, length);
-                // Create an icon from the in-memory file.
+                    // Copy a picture.
 
-                dst.BaseStream.Seek(0, SeekOrigin.Begin);
-                splitIcons.Add(new Icon(dst.BaseStream));
+                    dst.Write(src, offset, length);
+                    // Create an icon from the in-memory file.
+
+                    dst.BaseStream.Seek(0, SeekOrigin.Begin);
+                    splitIcons.Add(new Icon(dst.BaseStream));
+                }
             }
-        }
 
-        return splitIcons.ToList();
+            return splitIcons.ToList();
+        });
+
+        return result;
     }
 }

@@ -8,7 +8,7 @@ public static class IconExtractor
     /// <summary>Splits up the different images in the icon.</summary>
     /// <param name="filename">Path to the file.</param>
     /// <returns></returns>
-    public static List<Icon> Split(string filename)
+    public static async Task<List<Icon>> Split(string filename)
     {
         // Check if filename is provided
         if (string.IsNullOrEmpty(filename))
@@ -26,17 +26,23 @@ public static class IconExtractor
         switch (Path.GetExtension(filename))
         {
             case ".exe":
-                return ExtractIconsFromExe(filename);
+                var resExe = await ExtractIconsFromExe(filename);
+                return resExe;
             case ".ico":
             case ".cur":
-                var icon = new Icon(filename);
-                return ExtractImagesFromIcon(icon);
+                var resIco = await Task.Run(async () =>
+                {
+                    var icon = new Icon(filename);
+                    var resIco = await ExtractImagesFromIcon(icon);
+                    return resIco;
+                });
+                return resIco;
             default:
                 throw new InvalidOperationException(@"Input file must have one of following extensions: "".exe"", "".ico"", "".cur""");
         }
     }
 
-    public static List<Icon> ExtractImagesFromIcon(Icon icon)
+    public static async Task<List<Icon>> ExtractImagesFromIcon(Icon icon)
     {
         // Check if icon is provided
         if (icon == null)
@@ -44,105 +50,110 @@ public static class IconExtractor
             throw new ArgumentNullException(nameof(icon));
         }
 
-        return Utils.IconUtils.Split(icon);
+        var icons = await Utils.IconUtils.Split(icon);
+        return icons;
     }
 
-    private static List<Icon> ExtractIconsFromExe(string exeFileName)
+    private static async Task<List<Icon>> ExtractIconsFromExe(string exeFileName)
     {
-        // Handle to the icon
-        var hIcon = IntPtr.Zero;
-
-        // Try to load the icon
-        try
+        var result = await Task.Run(() =>
         {
-            // Load icon from file
-            hIcon = DllImport.Kernel32.LoadLibraryEx(exeFileName, IntPtr.Zero, Constants.Kernel32.LOAD_LIBRARY_AS_DATAFILE);
+            // Handle to the icon
+            var hIcon = IntPtr.Zero;
 
-            if (hIcon == IntPtr.Zero)
+            // Try to load the icon
+            try
             {
-                throw new Win32Exception("Failed to load the icon from disk");
-            }
+                // Load icon from file
+                hIcon = DllImport.Kernel32.LoadLibraryEx(exeFileName, IntPtr.Zero, Constants.Kernel32.LOAD_LIBRARY_AS_DATAFILE);
 
-            // Buffer to store the raw data
-            var dataBuffer = new List<byte[]>();
-
-            DllImport.ENUMRESNAMEPROC callback = (lpIcon, lpType, lpName, lParam) =>
-            {
-                // http://msdn.microsoft.com/en-us/library/ms997538.aspx
-
-                // RT_GROUP_ICON resource consists of a GRPICONDIR and GRPICONDIRENTRY's.
-                var dir = GetDataFromResource(lpIcon, Constants.Kernel32.RT_GROUP_ICON, lpName);
-
-                #region Calculate the size of an entire .icon file.
-                // GRPICONDIR.idCount
-                int count = BitConverter.ToUInt16(dir, 4);
-
-                // sizeof(ICONDIR) + sizeof(ICONDIRENTRY) * count
-                int len = 6 + 16 * count;
-                for (int i = 0; i < count; ++i)
+                if (hIcon == IntPtr.Zero)
                 {
-                    // GRPICONDIRENTRY.dwBytesInRes
-                    len += BitConverter.ToInt32(dir, 6 + 14 * i + 8);
+                    throw new Win32Exception("Failed to load the icon from disk");
                 }
-                #endregion
 
-                using (var dst = new BinaryWriter(new MemoryStream(len)))
+                // Buffer to store the raw data
+                var dataBuffer = new List<byte[]>();
+
+                DllImport.ENUMRESNAMEPROC callback = (lpIcon, lpType, lpName, lParam) =>
                 {
-                    // Copy GRPICONDIR to ICONDIR.
-                    dst.Write(dir, 0, 6);
+                    // http://msdn.microsoft.com/en-us/library/ms997538.aspx
+
+                    // RT_GROUP_ICON resource consists of a GRPICONDIR and GRPICONDIRENTRY's.
+                    var dir = GetDataFromResource(lpIcon, Constants.Kernel32.RT_GROUP_ICON, lpName);
+
+                    #region Calculate the size of an entire .icon file.
+                    // GRPICONDIR.idCount
+                    int count = BitConverter.ToUInt16(dir, 4);
 
                     // sizeof(ICONDIR) + sizeof(ICONDIRENTRY) * count
-                    int picOffset = 6 + 16 * count;
-
+                    int len = 6 + 16 * count;
                     for (int i = 0; i < count; ++i)
                     {
-                        // Load the picture.
+                        // GRPICONDIRENTRY.dwBytesInRes
+                        len += BitConverter.ToInt32(dir, 6 + 14 * i + 8);
+                    }
+                    #endregion
 
-                        // GRPICONDIRENTRY.nID
-                        ushort id = BitConverter.ToUInt16(dir, 6 + 14 * i + 12);
-                        var pic = GetDataFromResource(hIcon, Constants.Kernel32.RT_ICON, (IntPtr)id);
+                    using (var dst = new BinaryWriter(new MemoryStream(len)))
+                    {
+                        // Copy GRPICONDIR to ICONDIR.
+                        dst.Write(dir, 0, 6);
 
-                        // Copy GRPICONDIRENTRY to ICONDIRENTRY.
-                        dst.Seek(6 + 16 * i, SeekOrigin.Begin);
-                        // First 8bytes are identical.
-                        dst.Write(dir, 6 + 14 * i, 8);
-                        // ICONDIRENTRY.dwBytesInRes
-                        dst.Write(pic.Length);
-                        // ICONDIRENTRY.dwImageOffset
-                        dst.Write(picOffset);
+                        // sizeof(ICONDIR) + sizeof(ICONDIRENTRY) * count
+                        int picOffset = 6 + 16 * count;
 
-                        // Copy a picture.
-                        dst.Seek(picOffset, SeekOrigin.Begin);
-                        dst.Write(pic, 0, pic.Length);
+                        for (int i = 0; i < count; ++i)
+                        {
+                            // Load the picture.
 
-                        picOffset += pic.Length;
+                            // GRPICONDIRENTRY.nID
+                            ushort id = BitConverter.ToUInt16(dir, 6 + 14 * i + 12);
+                            var pic = GetDataFromResource(hIcon, Constants.Kernel32.RT_ICON, (IntPtr)id);
+
+                            // Copy GRPICONDIRENTRY to ICONDIRENTRY.
+                            dst.Seek(6 + 16 * i, SeekOrigin.Begin);
+                            // First 8bytes are identical.
+                            dst.Write(dir, 6 + 14 * i, 8);
+                            // ICONDIRENTRY.dwBytesInRes
+                            dst.Write(pic.Length);
+                            // ICONDIRENTRY.dwImageOffset
+                            dst.Write(picOffset);
+
+                            // Copy a picture.
+                            dst.Seek(picOffset, SeekOrigin.Begin);
+                            dst.Write(pic, 0, pic.Length);
+
+                            picOffset += pic.Length;
+                        }
+
+                        dataBuffer.Add(((MemoryStream)dst.BaseStream).ToArray());
                     }
 
-                    dataBuffer.Add(((MemoryStream)dst.BaseStream).ToArray());
-                }
+                    return true;
+                };
 
-                return true;
-            };
+                DllImport.Kernel32.EnumResourceNames(hIcon, Constants.Kernel32.RT_GROUP_ICON, callback, IntPtr.Zero);
 
-            DllImport.Kernel32.EnumResourceNames(hIcon, Constants.Kernel32.RT_GROUP_ICON, callback, IntPtr.Zero);
-
-            var result = new List<Icon>();
-            for (int i = 0; i < dataBuffer.Count; i++)
-            {
-                using (var ms = new MemoryStream(dataBuffer[i]))
+                var result = new List<Icon>();
+                for (int i = 0; i < dataBuffer.Count; i++)
                 {
-                    result.Add(new Icon(ms));
+                    using (var ms = new MemoryStream(dataBuffer[i]))
+                    {
+                        result.Add(new Icon(ms));
+                    }
+                }
+                return result;
+            }
+            finally
+            {
+                if (hIcon != IntPtr.Zero)
+                {
+                    DllImport.Kernel32.FreeLibrary(hIcon);
                 }
             }
-            return result;
-        }
-        finally
-        {
-            if (hIcon != IntPtr.Zero)
-            {
-                DllImport.Kernel32.FreeLibrary(hIcon);
-            }
-        }
+        });
+        return result;
     }
 
     private static byte[] GetDataFromResource(IntPtr hModule, IntPtr type, IntPtr name)
