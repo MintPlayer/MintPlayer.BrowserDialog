@@ -33,9 +33,9 @@ namespace MintPlayer.BrowserDialog
             btnOK = new Button();
             btnCancel = new Button();
             pnlParent = new Panel();
-            progressBar3 = new ProgressBar();
-            pnlLoading = new Panel();
             lvBrowsers = new ListView();
+            pnlLoading = new Panel();
+            progressBar3 = new ProgressBar();
             pnlParent.SuspendLayout();
             pnlLoading.SuspendLayout();
             SuspendLayout();
@@ -65,14 +65,15 @@ namespace MintPlayer.BrowserDialog
             btnCancel.Text = "Annuleren";
             btnCancel.UseVisualStyleBackColor = true;
             // 
-            // pnlLoading
+            // pnlParent
             // 
-            pnlLoading.Controls.Add(progressBar3);
-            pnlLoading.Dock = DockStyle.Fill;
-            pnlLoading.Location = new Point(0, 0);
-            pnlLoading.Name = "pnlLoading";
-            pnlLoading.Size = new Size(440, 252);
-            pnlLoading.TabIndex = 0;
+            pnlParent.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            pnlParent.Controls.Add(lvBrowsers);
+            pnlParent.Controls.Add(pnlLoading);
+            pnlParent.Location = new Point(12, 12);
+            pnlParent.Name = "pnlParent";
+            pnlParent.Size = new Size(440, 252);
+            pnlParent.TabIndex = 3;
             // 
             // lvBrowsers
             // 
@@ -86,15 +87,14 @@ namespace MintPlayer.BrowserDialog
             lvBrowsers.UseCompatibleStateImageBehavior = false;
             lvBrowsers.SelectedIndexChanged += LvBrowsers_SelectedIndexChanged;
             // 
-            // pnlParent
+            // pnlLoading
             // 
-            pnlParent.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            pnlParent.Controls.Add(lvBrowsers);
-            pnlParent.Controls.Add(pnlLoading);
-            pnlParent.Location = new Point(12, 12);
-            pnlParent.Name = "pnlParent";
-            pnlParent.Size = new Size(440, 252);
-            pnlParent.TabIndex = 3;
+            pnlLoading.Controls.Add(progressBar3);
+            pnlLoading.Dock = DockStyle.Fill;
+            pnlLoading.Location = new Point(0, 0);
+            pnlLoading.Name = "pnlLoading";
+            pnlLoading.Size = new Size(440, 252);
+            pnlLoading.TabIndex = 0;
             // 
             // progressBar3
             // 

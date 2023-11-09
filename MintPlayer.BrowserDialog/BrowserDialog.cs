@@ -95,6 +95,7 @@ public partial class BrowserDialog : Form
             pnlLoading.Visible = false;
             lvBrowsers.Visible = true;
             lvBrowsers.ResumeLayout();
+            lvBrowsers.Focus();
         }
     }
 
