@@ -14,7 +14,7 @@
 		<PackageTags>Get webbrowsers</PackageTags>
 		<RepositoryUrl>https://github.com/MintPlayer/MintPlayer.BrowserDialog</RepositoryUrl>
 		<RepositoryType>Git</RepositoryType>
-		<Version>7.1.0</Version>
+		<Version>7.2.0</Version>
 
 		<IncludeSymbols>true</IncludeSymbols>
 		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
@@ -34,6 +34,8 @@
 
 	<ItemGroup>
 		<Compile Remove="Enums\eAssociationType.cs" />
+		<None Include="Extensions\PackageVersionExtensions.cs" />
+		<Compile Remove="Extensions\PackageVersionExtensions.cs" Condition=" $(TargetFramework.StartsWith('net7.0-windows')) == 'false' " />
 	</ItemGroup>
 
 	<ItemGroup>

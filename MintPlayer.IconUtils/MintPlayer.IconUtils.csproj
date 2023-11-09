@@ -19,7 +19,7 @@
 		<RepositoryUrl>https://github.com/MintPlayer/MintPlayer.BrowserDialog</RepositoryUrl>
 		<RepositoryType>Git</RepositoryType>
 		<PackageTags>Icon, Split, Extract</PackageTags>
-		<Version>7.0.2</Version>
+		<Version>7.2.0</Version>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
